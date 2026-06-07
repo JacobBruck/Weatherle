@@ -1,0 +1,82 @@
+:root {
+  color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --card-radius: 20px;
+  --card-radius-lg: 28px;
+  --blur-amount: 20px;
+
+  --text-primary: rgba(255, 255, 255, 0.96);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+
+  --glass-bg: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+
+  --good: #34c759;
+  --bad: #ff453a;
+  --neutral: #ffd60a;
+
+  --max-width: 480px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text-primary);
+  text-shadow: var(--text-shadow);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* Frosted-glass card, shared by reveal card / hint rows / status banners */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-amount)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Weather condition + day/night gradient themes, applied to the page background */
+.theme-clear-day { background: linear-gradient(180deg, #4da0ff 0%, #8fcdff 60%, #c8e8ff 100%); }
+.theme-clear-night { background: linear-gradient(180deg, #0b1340 0%, #1d2a6b 55%, #3a4a8f 100%); }
+.theme-partly-cloudy-day { background: linear-gradient(180deg, #6fa6e0 0%, #aac9e8 60%, #d8e6ee 100%); }
+.theme-partly-cloudy-night { background: linear-gradient(180deg, #141c3d 0%, #2b3863 55%, #4a5882 100%); }
+.theme-overcast-day { background: linear-gradient(180deg, #7e8aa0 0%, #a7afbe 60%, #cdd2d9 100%); }
+.theme-overcast-night { background: linear-gradient(180deg, #20242f 0%, #3a3f4d 55%, #565b69 100%); }
+.theme-fog-day { background: linear-gradient(180deg, #9aa3ad 0%, #c2c8cf 60%, #dde1e5 100%); }
+.theme-fog-night { background: linear-gradient(180deg, #2a2e36 0%, #454a54 55%, #62676f 100%); }
+.theme-rain-day { background: linear-gradient(180deg, #4b5c6b 0%, #6f8294 60%, #9aabb9 100%); }
+.theme-rain-night { background: linear-gradient(180deg, #161d28 0%, #2c3a4a 55%, #44586c 100%); }
+.theme-snow-day { background: linear-gradient(180deg, #8fa3b8 0%, #c4d3df 60%, #eef3f7 100%); }
+.theme-snow-night { background: linear-gradient(180deg, #2b3446 0%, #4c5a72 55%, #748497 100%); }
+.theme-storm-day { background: linear-gradient(180deg, #3b4250 0%, #565f70 60%, #767f8f 100%); }
+.theme-storm-night { background: linear-gradient(180deg, #0d0f17 0%, #20242f 55%, #353a47 100%); }
+
+.bg-transition {
+  transition: background 0.6s ease;
+}

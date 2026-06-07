@@ -1,0 +1,61 @@
+.icon {
+  display: block;
+  overflow: visible;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes drift {
+  from { transform: translateX(-6%); }
+  to { transform: translateX(6%); }
+}
+@keyframes fall {
+  from { transform: translateY(-2px); opacity: 0; }
+  15% { opacity: 1; }
+  to { transform: translateY(14px); opacity: 0; }
+}
+@keyframes drift-fall {
+  from { transform: translate(-3px, -2px); opacity: 0; }
+  20% { opacity: 1; }
+  to { transform: translate(3px, 14px); opacity: 0; }
+}
+@keyframes flash {
+  0%, 55%, 100% { opacity: 0.55; }
+  60%, 75% { opacity: 1; }
+}
+@keyframes drift-fog {
+  0%, 100% { transform: translateX(-4%); opacity: 0.7; }
+  50% { transform: translateX(4%); opacity: 1; }
+}
+
+.sunGroup {
+  transform-origin: center;
+  animation: spin-slow 40s linear infinite;
+}
+.moon {
+  animation: float 6s ease-in-out infinite;
+}
+.cloudBack {
+  animation: drift 10s ease-in-out infinite alternate;
+}
+.cloudFront {
+  animation: drift 7s ease-in-out infinite alternate-reverse;
+}
+.drop {
+  animation: fall 1s linear infinite;
+}
+.flake {
+  animation: drift-fall 3.2s linear infinite;
+}
+.bolt {
+  animation: flash 2.6s ease-in-out infinite;
+  transform-origin: center;
+}
+.fogLine {
+  animation: drift-fog 6s ease-in-out infinite;
+}

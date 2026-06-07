@@ -1,0 +1,83 @@
+.card {
+  width: 100%;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.dayNightBadge {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cityName {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.cityNameRevealed {
+  color: var(--text-primary);
+  text-transform: none;
+  font-size: 1.4rem;
+}
+
+.temperature {
+  font-size: clamp(4rem, 22vw, 6rem);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 4px 0 0;
+}
+
+.condition {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0 0 6px;
+}
+
+.iconWrap {
+  margin: 4px 0;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.statValue {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.placeholder {
+  height: clamp(4rem, 22vw, 6rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
