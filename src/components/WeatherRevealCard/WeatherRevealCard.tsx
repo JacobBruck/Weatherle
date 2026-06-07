@@ -1,6 +1,7 @@
 import type { OpenMeteoResponse } from '../../types/weather';
 import type { WeatherStatus } from '../../hooks/useWeather';
 import { getWeatherInfo } from '../../utils/weatherCodes';
+import { formatTemperature, type TemperatureUnit } from '../../utils/temperature';
 import { WeatherIcon } from '../WeatherIcon/WeatherIcon';
 import styles from './WeatherRevealCard.module.css';
 
@@ -10,6 +11,8 @@ interface WeatherRevealCardProps {
   error: string | null;
   /** Shown once the round is over (won or lost) — e.g. "Tokyo, Japan" */
   revealedCityLabel: string | null;
+  unit: TemperatureUnit;
+  onUnitChange: (unit: TemperatureUnit) => void;
 }
 
 function formatTime(iso: string): string {
@@ -22,9 +25,28 @@ function formatTime(iso: string): string {
   return `${hour12}:${minute} ${period}`;
 }
 
-export function WeatherRevealCard({ data, status, error, revealedCityLabel }: WeatherRevealCardProps) {
+export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit, onUnitChange }: WeatherRevealCardProps) {
   return (
     <section className={`glass ${styles.card}`} aria-live="polite">
+      <div className={styles.unitToggle} role="group" aria-label="Temperature unit">
+        <button
+          type="button"
+          className={unit === 'C' ? `${styles.unitButton} ${styles.unitButtonActive}` : styles.unitButton}
+          aria-pressed={unit === 'C'}
+          onClick={() => onUnitChange('C')}
+        >
+          °C
+        </button>
+        <button
+          type="button"
+          className={unit === 'F' ? `${styles.unitButton} ${styles.unitButtonActive}` : styles.unitButton}
+          aria-pressed={unit === 'F'}
+          onClick={() => onUnitChange('F')}
+        >
+          °F
+        </button>
+      </div>
+
       {status === 'success' && data && (
         <span
           className={styles.dayNightBadge}
@@ -47,14 +69,14 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel }: We
           <div className={styles.iconWrap}>
             <WeatherIcon icon={getWeatherInfo(data.current.weather_code).icon} isDay={data.current.is_day} size={88} />
           </div>
-          <p className={styles.temperature}>{Math.round(data.current.temperature_2m)}°</p>
+          <p className={styles.temperature}>{formatTemperature(data.current.temperature_2m, unit)}</p>
           <p className={styles.condition}>{getWeatherInfo(data.current.weather_code).label}</p>
 
           <div className={styles.statsRow}>
             <div className={styles.stat}>
               <span className={styles.statLabel}>High / Low</span>
               <span className={styles.statValue}>
-                {Math.round(data.daily.temperature_2m_max[0])}° / {Math.round(data.daily.temperature_2m_min[0])}°
+                {formatTemperature(data.daily.temperature_2m_max[0], unit)} / {formatTemperature(data.daily.temperature_2m_min[0], unit)}
               </span>
             </div>
             <div className={styles.stat}>

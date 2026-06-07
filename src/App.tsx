@@ -1,6 +1,7 @@
 import { useDailyCity } from './hooks/useDailyCity';
 import { useWeather } from './hooks/useWeather';
 import { useGameState } from './hooks/useGameState';
+import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { getThemeClassName } from './utils/weatherCodes';
 import { WeatherRevealCard } from './components/WeatherRevealCard/WeatherRevealCard';
 import { GuessInput } from './components/GuessInput/GuessInput';
@@ -12,6 +13,7 @@ function App() {
   const { city, dateString } = useDailyCity();
   const { data, status: weatherStatus, error } = useWeather(city, dateString);
   const { entries, status: gameStatus, submitGuess } = useGameState(city, dateString);
+  const [unit, setUnit] = useTemperatureUnit();
 
   const themeClass = data ? getThemeClassName(data.current.weather_code, data.current.is_day) : 'theme-clear-day';
   const isOver = gameStatus !== 'in-progress';
@@ -23,7 +25,14 @@ function App() {
         <h1 className={styles.title}>Weatherle</h1>
         <p className={styles.subtitle}>Guess the city from its weather.</p>
 
-        <WeatherRevealCard data={data} status={weatherStatus} error={error} revealedCityLabel={revealedCityLabel} />
+        <WeatherRevealCard
+          data={data}
+          status={weatherStatus}
+          error={error}
+          revealedCityLabel={revealedCityLabel}
+          unit={unit}
+          onUnitChange={setUnit}
+        />
 
         <GameStatus status={gameStatus} guessCount={entries.length} targetCity={city} />
 

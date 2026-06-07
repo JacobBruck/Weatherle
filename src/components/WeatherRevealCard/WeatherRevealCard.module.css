@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   width: 100%;
   padding: 28px 24px 24px;
   display: flex;
@@ -6,6 +7,33 @@
   align-items: center;
   text-align: center;
   gap: 4px;
+}
+
+.unitToggle {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.unitButton {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 5px 11px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.unitButtonActive {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
 }
 
 .dayNightBadge {
