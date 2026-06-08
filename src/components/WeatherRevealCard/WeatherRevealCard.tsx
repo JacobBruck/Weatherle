@@ -1,7 +1,7 @@
 import type { OpenMeteoResponse } from '../../types/weather';
 import type { WeatherStatus } from '../../hooks/useWeather';
 import { getWeatherInfo } from '../../utils/weatherCodes';
-import { formatTemperature, type TemperatureUnit } from '../../utils/temperature';
+import { formatTemperature, formatWindSpeed, type TemperatureUnit } from '../../utils/temperature';
 import { WeatherIcon } from '../WeatherIcon/WeatherIcon';
 import styles from './WeatherRevealCard.module.css';
 
@@ -28,15 +28,7 @@ function formatTime(iso: string): string {
 export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit, onUnitChange }: WeatherRevealCardProps) {
   return (
     <section className={`glass ${styles.card}`} aria-live="polite">
-      <div className={styles.unitToggle} role="group" aria-label="Temperature unit">
-        <button
-          type="button"
-          className={unit === 'C' ? `${styles.unitButton} ${styles.unitButtonActive}` : styles.unitButton}
-          aria-pressed={unit === 'C'}
-          onClick={() => onUnitChange('C')}
-        >
-          °C
-        </button>
+      <div className={styles.unitToggle} role="group" aria-label="Units">
         <button
           type="button"
           className={unit === 'F' ? `${styles.unitButton} ${styles.unitButtonActive}` : styles.unitButton}
@@ -44,6 +36,14 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit
           onClick={() => onUnitChange('F')}
         >
           °F
+        </button>
+        <button
+          type="button"
+          className={unit === 'C' ? `${styles.unitButton} ${styles.unitButtonActive}` : styles.unitButton}
+          aria-pressed={unit === 'C'}
+          onClick={() => onUnitChange('C')}
+        >
+          °C
         </button>
       </div>
 
@@ -85,7 +85,7 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit
             </div>
             <div className={styles.stat}>
               <span className={styles.statLabel}>Wind</span>
-              <span className={styles.statValue}>{Math.round(data.current.wind_speed_10m)} km/h</span>
+              <span className={styles.statValue}>{formatWindSpeed(data.current.wind_speed_10m, unit)}</span>
             </div>
           </div>
           <div className={styles.statsRow}>

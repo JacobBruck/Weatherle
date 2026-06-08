@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CITIES } from '../data/cities';
 import { getDailyCity } from '../utils/dailyCity';
-import { getUTCDateString } from '../utils/dateSeed';
+import { getEasternDateString } from '../utils/dateSeed';
 
 interface DailyCityState {
   city: ReturnType<typeof getDailyCity>;
@@ -10,13 +10,13 @@ interface DailyCityState {
 
 function computeState(): DailyCityState {
   const now = new Date();
-  return { city: getDailyCity(CITIES, now), dateString: getUTCDateString(now) };
+  return { city: getDailyCity(CITIES, now), dateString: getEasternDateString(now) };
 }
 
 /**
- * Returns today's deterministic target city plus its UTC date key.
- * Re-derives both if the UTC calendar date changes while the tab stays open
- * (checked on a timer and on tab focus/visibility change).
+ * Returns today's deterministic target city plus its America/New_York date key.
+ * The daily city changes at Eastern midnight. Re-derives both if that calendar
+ * date changes while the tab stays open (checked on a timer and on tab focus/visibility change).
  */
 export function useDailyCity(): DailyCityState {
   const [state, setState] = useState<DailyCityState>(computeState);

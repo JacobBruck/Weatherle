@@ -23,7 +23,7 @@ export interface HintResult {
 export type GameStatus = 'in-progress' | 'won' | 'lost';
 
 export interface PersistedDayState {
-  /** UTC "YYYY-MM-DD" — must match getUTCDateString() for the stored state to be valid. */
+  /** America/New_York "YYYY-MM-DD" — must match getEasternDateString() for the stored state to be valid. */
   date: string;
   targetCityId: string;
   guessedCityIds: string[];

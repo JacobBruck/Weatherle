@@ -28,3 +28,30 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
+
+.countdown {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.playAgainButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-shadow: inherit;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.playAgainButton:hover {
+  background: rgba(255, 255, 255, 0.26);
+  transform: translateY(-1px);
+}

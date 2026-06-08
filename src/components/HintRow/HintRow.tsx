@@ -1,14 +1,21 @@
 import type { City } from '../../types/city';
 import type { HintResult, PopulationComparison, PopulationMagnitude } from '../../types/game';
+import { formatDistance, type TemperatureUnit } from '../../utils/temperature';
 import styles from './HintRow.module.css';
 
 interface HintRowProps {
   guess: City;
   hint: HintResult;
+  unit: TemperatureUnit;
 }
 
 function matchClass(match: boolean): string {
   return match ? styles.chipMatch : styles.chipMismatch;
+}
+
+/** Population, direction and distance are relative measures — only worth highlighting green on an exact match. */
+function correctClass(correct: boolean): string {
+  return correct ? styles.chipMatch : '';
 }
 
 const POPULATION_LABELS: Record<PopulationComparison, Record<PopulationMagnitude, string>> = {
@@ -21,7 +28,7 @@ function populationLabel(hint: HintResult): string {
   return POPULATION_LABELS[hint.populationComparison][hint.populationMagnitude];
 }
 
-export function HintRow({ guess, hint }: HintRowProps) {
+export function HintRow({ guess, hint, unit }: HintRowProps) {
   return (
     <li className={`glass ${styles.row}`}>
       <div className={styles.header}>
@@ -48,12 +55,12 @@ export function HintRow({ guess, hint }: HintRowProps) {
           <span className={styles.chipValue}>{guess.country}</span>
         </div>
 
-        <div className={styles.chip}>
+        <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
           <span className={styles.chipLabel}>Population</span>
           <span className={styles.chipValue}>{populationLabel(hint)}</span>
         </div>
 
-        <div className={styles.chip}>
+        <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
           <span className={styles.chipLabel}>Direction to target</span>
           <span className={styles.chipValue}>
             {hint.isCorrect ? (
@@ -73,10 +80,10 @@ export function HintRow({ guess, hint }: HintRowProps) {
           </span>
         </div>
 
-        <div className={styles.chip}>
+        <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
           <span className={styles.chipLabel}>Distance</span>
           <span className={styles.chipValue}>
-            {hint.isCorrect ? '0 km / 0 mi' : `${Math.round(hint.distanceKm).toLocaleString()} km / ${Math.round(hint.distanceMiles).toLocaleString()} mi`}
+            {hint.isCorrect ? formatDistance(0, 0, unit) : formatDistance(hint.distanceKm, hint.distanceMiles, unit)}
           </span>
         </div>
       </div>

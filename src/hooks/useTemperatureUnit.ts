@@ -6,9 +6,9 @@ const STORAGE_KEY = 'weatherle:unit';
 function readStoredUnit(): TemperatureUnit {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw === 'F' ? 'F' : 'C';
+    return raw === 'C' ? 'C' : 'F';
   } catch {
-    return 'C';
+    return 'F';
   }
 }
 

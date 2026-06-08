@@ -99,7 +99,9 @@ export function GuessInput({ onSubmitGuess, disabled, guessedCityIds, placeholde
         onKeyDown={handleKeyDown}
       />
       {open && query.trim() && (
-        <ul className={styles.dropdown + ' glass'} id={listboxId} role="listbox">
+        <>
+          <div className={styles.backdrop} aria-hidden="true" onMouseDown={(e) => e.preventDefault()} />
+          <ul className={styles.dropdown + ' glass'} id={listboxId} role="listbox">
           {suggestions.length === 0 && <li className={styles.empty}>No matching cities</li>}
           {suggestions.map((city, index) => (
             <li
@@ -116,7 +118,8 @@ export function GuessInput({ onSubmitGuess, disabled, guessedCityIds, placeholde
               <span className={styles.optionCountry}>{city.country}</span>
             </li>
           ))}
-        </ul>
+          </ul>
+        </>
       )}
     </div>
   );

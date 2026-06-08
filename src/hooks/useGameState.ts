@@ -34,7 +34,7 @@ function statusFor(guessedCount: number, won: boolean): GameStatus {
 
 /**
  * Orchestrates guesses, win/loss detection, and localStorage persistence for "today".
- * Re-initializes whenever the target city or date changes (e.g. UTC midnight rollover).
+ * Re-initializes whenever the target city or date changes (e.g. Eastern midnight rollover).
  */
 export function useGameState(targetCity: City, dateString: string): UseGameStateResult {
   const [persisted, setPersisted] = useState<PersistedDayState>(() => {
