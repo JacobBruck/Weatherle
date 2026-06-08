@@ -1,6 +1,13 @@
+import { elevationOf } from '../data/cityElevations';
 import { vibeOf } from '../data/cityVibes';
 import type { City } from '../types/city';
-import type { HintResult, PopulationComparison, PopulationMagnitude } from '../types/game';
+import type {
+  ElevationComparison,
+  ElevationMagnitude,
+  HintResult,
+  PopulationComparison,
+  PopulationMagnitude,
+} from '../types/game';
 import { bearingToCompass, haversineKm, hemisphereOf, initialBearingDeg, kmToMiles } from './geo';
 
 function populationComparisonOf(guess: City, target: City): PopulationComparison {
@@ -13,6 +20,21 @@ function populationMagnitudeOf(guess: City, target: City): PopulationMagnitude {
   const ratio = Math.max(guess.population, target.population) / Math.min(guess.population, target.population);
   if (ratio < 1.5) return 'same-tier';
   if (ratio < 4) return 'close';
+  return 'far';
+}
+
+function elevationComparisonOf(guess: City, target: City): ElevationComparison {
+  const guessElevation = elevationOf(guess);
+  const targetElevation = elevationOf(target);
+  if (targetElevation === guessElevation) return 'equal';
+  return targetElevation > guessElevation ? 'target-higher' : 'target-lower';
+}
+
+/** Buckets how far apart two elevations are, by absolute difference in meters. */
+function elevationMagnitudeOf(guess: City, target: City): ElevationMagnitude {
+  const diff = Math.abs(elevationOf(target) - elevationOf(guess));
+  if (diff < 100) return 'same-tier';
+  if (diff < 500) return 'close';
   return 'far';
 }
 
@@ -31,6 +53,8 @@ export function compareCities(guess: City, target: City): HintResult {
     guessVibe: vibeOf(guess),
     populationComparison: populationComparisonOf(guess, target),
     populationMagnitude: populationMagnitudeOf(guess, target),
+    elevationComparison: elevationComparisonOf(guess, target),
+    elevationMagnitude: elevationMagnitudeOf(guess, target),
     distanceKm,
     distanceMiles: kmToMiles(distanceKm),
     bearingDeg,

@@ -3,6 +3,8 @@ import type { CompassDirection, Hemisphere } from '../utils/geo';
 
 export type PopulationComparison = 'target-bigger' | 'target-smaller' | 'equal';
 export type PopulationMagnitude = 'same-tier' | 'close' | 'far';
+export type ElevationComparison = 'target-higher' | 'target-lower' | 'equal';
+export type ElevationMagnitude = 'same-tier' | 'close' | 'far';
 
 export interface HintResult {
   guessedCityId: string;
@@ -15,6 +17,9 @@ export interface HintResult {
   /** Describes the TARGET relative to the guess — drives an arrow telling the player which way to adjust. */
   populationComparison: PopulationComparison;
   populationMagnitude: PopulationMagnitude;
+  /** Describes the TARGET's elevation relative to the guess — drives an arrow telling the player which way to adjust. */
+  elevationComparison: ElevationComparison;
+  elevationMagnitude: ElevationMagnitude;
   distanceKm: number;
   distanceMiles: number;
   /** Compass bearing from the guessed city toward the target city. */

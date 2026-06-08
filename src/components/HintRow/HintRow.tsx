@@ -1,6 +1,13 @@
+import { elevationOf } from '../../data/cityElevations';
 import { VIBE_EMOJI, VIBE_LABELS } from '../../data/cityVibes';
 import type { City } from '../../types/city';
-import type { HintResult, PopulationComparison, PopulationMagnitude } from '../../types/game';
+import type {
+  ElevationComparison,
+  ElevationMagnitude,
+  HintResult,
+  PopulationComparison,
+  PopulationMagnitude,
+} from '../../types/game';
 import { formatDistance, type TemperatureUnit } from '../../utils/temperature';
 import styles from './HintRow.module.css';
 
@@ -38,6 +45,21 @@ function formatPopulation(population: number): string {
     return `${Math.round(population / 1000)}k`;
   }
   return `${population}`;
+}
+
+const ELEVATION_LABELS: Record<ElevationComparison, Record<ElevationMagnitude, string>> = {
+  'target-higher': { 'same-tier': 'Slightly higher ▲', close: 'Higher ▲', far: 'Much higher ▲▲' },
+  'target-lower': { 'same-tier': 'Slightly lower ▼', close: 'Lower ▼', far: 'Much lower ▼▼' },
+  equal: { 'same-tier': 'Same elevation', close: 'Same elevation', far: 'Same elevation' },
+};
+
+function elevationLabel(hint: HintResult): string {
+  if (hint.isCorrect) return 'Correct';
+  return ELEVATION_LABELS[hint.elevationComparison][hint.elevationMagnitude];
+}
+
+function formatElevation(elevationM: number): string {
+  return `${Math.round(elevationM)}m`;
 }
 
 export function HintRow({ guess, hint, unit }: HintRowProps) {
@@ -78,6 +100,13 @@ export function HintRow({ guess, hint, unit }: HintRowProps) {
           <span className={styles.chipLabel}>Population</span>
           <span className={styles.chipValue}>
             {formatPopulation(guess.population)} · {populationLabel(hint)}
+          </span>
+        </div>
+
+        <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
+          <span className={styles.chipLabel}>Elevation</span>
+          <span className={styles.chipValue}>
+            {formatElevation(elevationOf(guess))} · {elevationLabel(hint)}
           </span>
         </div>
 
