@@ -8,7 +8,6 @@
   padding: 24px;
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
   animation: fadeIn 0.2s ease;
 }
 

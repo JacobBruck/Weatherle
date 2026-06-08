@@ -35,7 +35,6 @@
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-amount)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(160%);
   box-shadow: var(--glass-shadow);
   color: inherit;
   text-shadow: inherit;
@@ -59,7 +58,6 @@
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-amount)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(160%);
   box-shadow: var(--glass-shadow);
 }
 
@@ -75,7 +73,6 @@
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-amount)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--blur-amount)) saturate(160%);
   box-shadow: var(--glass-shadow);
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
 }
