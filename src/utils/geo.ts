@@ -24,14 +24,24 @@ export function kmToMiles(km: number): number {
   return km * KM_TO_MILES;
 }
 
-/** Initial bearing (forward azimuth) in degrees [0, 360) from point 1 toward point 2. */
+/**
+ * Rhumb-line (loxodrome) bearing in degrees [0, 360) from point 1 toward point 2 — the
+ * constant compass course between them, i.e. a straight line on a standard flat map.
+ *
+ * We deliberately use this instead of the great-circle initial bearing: the great-circle
+ * route can start by heading toward a pole (e.g. Dallas -> Mumbai initially points almost
+ * due north before curving), which matches "shortest path on a globe" but not how players
+ * picture relative direction when looking at a map.
+ */
 export function initialBearingDeg(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const phi1 = toRad(lat1);
   const phi2 = toRad(lat2);
-  const dLambda = toRad(lon2 - lon1);
-  const y = Math.sin(dLambda) * Math.cos(phi2);
-  const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLambda);
-  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+  let dLambda = toRad(lon2 - lon1);
+  if (Math.abs(dLambda) > Math.PI) {
+    dLambda = dLambda > 0 ? -(2 * Math.PI - dLambda) : 2 * Math.PI + dLambda;
+  }
+  const dPsi = Math.log(Math.tan(Math.PI / 4 + phi2 / 2) / Math.tan(Math.PI / 4 + phi1 / 2));
+  return (toDeg(Math.atan2(dLambda, dPsi)) + 360) % 360;
 }
 
 const COMPASS_POINTS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
