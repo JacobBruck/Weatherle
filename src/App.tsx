@@ -8,6 +8,7 @@ import { useDifficulty, citiesForDifficulty } from './hooks/useDifficulty';
 import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { useColorScheme } from './hooks/useColorScheme';
 import { getThemeClassName } from './utils/weatherCodes';
+import { trackEvent } from './utils/analytics';
 import { WeatherRevealCard } from './components/WeatherRevealCard/WeatherRevealCard';
 import { GuessInput } from './components/GuessInput/GuessInput';
 import { GuessHistory } from './components/GuessHistory/GuessHistory';
@@ -52,6 +53,9 @@ function App() {
     setMode(nextMode);
     setDifficulty(nextDifficulty);
     setShowModePrompt(false);
+    // One event per "version" of the game played — lets the GA dashboard break plays
+    // down by mode/difficulty, and (via GA's built-in geo data) by country and region.
+    trackEvent('game_start', { mode: nextMode, difficulty: nextDifficulty });
   }
 
   return (
