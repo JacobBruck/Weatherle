@@ -3,7 +3,12 @@ import type { PersistedDayState } from '../types/game';
 const STORAGE_KEY = 'weatherle:v1';
 
 interface PersistedRoot {
-  [date: string]: PersistedDayState;
+  /** Keyed by `${date}:${difficulty}` — Easy and Hard track separate daily progress. */
+  [key: string]: PersistedDayState;
+}
+
+function keyFor(date: string, difficulty: string): string {
+  return `${date}:${difficulty}`;
 }
 
 function readRoot(): PersistedRoot {
@@ -25,22 +30,23 @@ function writeRoot(root: PersistedRoot): void {
   }
 }
 
-export function loadDayState(date: string): PersistedDayState | null {
-  return readRoot()[date] ?? null;
+export function loadDayState(date: string, difficulty: string): PersistedDayState | null {
+  return readRoot()[keyFor(date, difficulty)] ?? null;
 }
 
 export function saveDayState(state: PersistedDayState): void {
   const root = readRoot();
-  root[state.date] = state;
+  root[keyFor(state.date, state.difficulty)] = state;
   writeRoot(root);
 }
 
-/** Drops any stored days other than `currentDate`, keeping localStorage small. */
+/** Drops any stored entries from days other than `currentDate` (across all difficulties), keeping localStorage small. */
 export function pruneOldDays(currentDate: string): void {
   const root = readRoot();
-  const keys = Object.keys(root);
-  if (keys.length <= 1 && keys[0] === currentDate) return;
   const pruned: PersistedRoot = {};
-  if (root[currentDate]) pruned[currentDate] = root[currentDate];
+  for (const [key, state] of Object.entries(root)) {
+    if (state.date === currentDate) pruned[key] = state;
+  }
+  if (Object.keys(pruned).length === Object.keys(root).length) return;
   writeRoot(pruned);
 }

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { CITIES } from './data/cities';
 import { useDailyCity } from './hooks/useDailyCity';
 import { useWeather } from './hooks/useWeather';
 import { useGameState } from './hooks/useGameState';
@@ -17,35 +16,26 @@ import { ModeSelectModal } from './components/ModeSelectModal/ModeSelectModal';
 import type { GameMode } from './hooks/useGameMode';
 import styles from './App.module.css';
 
-const MODE_PROMPT_SEEN_KEY = 'weatherle:modePromptSeen';
-
-function readModePromptSeen(): boolean {
-  try {
-    return sessionStorage.getItem(MODE_PROMPT_SEEN_KEY) === '1';
-  } catch {
-    return true;
-  }
-}
-
 function App() {
   const [unit, setUnit] = useTemperatureUnit();
   const [scheme, setScheme] = useColorScheme();
   const [mode, setMode] = useGameMode();
   const [difficulty, setDifficulty] = useDifficulty();
-  const [showModePrompt, setShowModePrompt] = useState(() => !readModePromptSeen());
+  // Always greets the player with the mode-select menu on load — every page refresh, not just once per session.
+  const [showModePrompt, setShowModePrompt] = useState(true);
 
-  // Difficulty only governs the Unlimited practice pool — the Daily Challenge target must
-  // stay drawn from the full city list so it's the same mystery city for every player
-  // (and so its name is always something the autocomplete can find, regardless of pool size).
-  const unlimitedCities = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
+  // Difficulty scopes both the Daily Challenge and Unlimited mode to the same city pool —
+  // Easy and Hard each get their own deterministic daily target (same for every player
+  // within that pool), and the autocomplete always covers whatever pool is active.
+  const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
-  const daily = useDailyCity(CITIES);
-  const dailyGame = useGameState(daily.city, daily.dateString);
-  const unlimited = useUnlimitedGame(unlimitedCities);
+  const daily = useDailyCity(pool);
+  const dailyGame = useGameState(daily.city, daily.dateString, difficulty);
+  const unlimited = useUnlimitedGame(pool);
 
   const isDaily = mode === 'daily';
   const activeCity = isDaily ? daily.city : unlimited.city;
-  const guessableCities = isDaily ? CITIES : unlimitedCities;
+  const guessableCities = pool;
   const weatherCacheKey = isDaily ? daily.dateString : `unlimited-${unlimited.roundId}`;
   const { data, status: weatherStatus, error } = useWeather(activeCity, weatherCacheKey);
 
@@ -60,11 +50,6 @@ function App() {
   function chooseMode(next: GameMode) {
     setMode(next);
     setShowModePrompt(false);
-    try {
-      sessionStorage.setItem(MODE_PROMPT_SEEN_KEY, '1');
-    } catch {
-      // sessionStorage unavailable — the prompt will simply reappear next load.
-    }
   }
 
   return (

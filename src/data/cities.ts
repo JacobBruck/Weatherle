@@ -4059,5 +4059,329 @@ export const CITIES: City[] = [
     longitude: 30.7133,
     population: 1300000,
     timezone: "Europe/Istanbul"
+  },
+
+  // --- Hand-appended Easy-pool refresh (round 2) ----------------------------------------
+  // Added per a follow-up Easy-mode add/remove pass. Appended at the end (never reordered
+  // into the alphabetical generator output) for the same reason as the holiday-cities batch
+  // above: keeps every existing entry's index stable for the daily-pick rotation.
+  {
+    id: "montevideo-uy",
+    name: "Montevideo",
+    country: "Uruguay",
+    countryCode: "UY",
+    continent: "South America",
+    latitude: -34.9011,
+    longitude: -56.1645,
+    population: 1305082,
+    timezone: "America/Montevideo"
+  },
+  {
+    id: "la-paz-bo",
+    name: "La Paz",
+    country: "Bolivia",
+    countryCode: "BO",
+    continent: "South America",
+    latitude: -16.5,
+    longitude: -68.15,
+    population: 789585,
+    timezone: "America/La_Paz"
+  },
+  {
+    id: "asuncion-py",
+    name: "Asuncion",
+    country: "Paraguay",
+    countryCode: "PY",
+    continent: "South America",
+    latitude: -25.2637,
+    longitude: -57.5759,
+    population: 525294,
+    timezone: "America/Asuncion"
+  },
+  {
+    id: "wellington-nz",
+    name: "Wellington",
+    country: "New Zealand",
+    countryCode: "NZ",
+    continent: "Oceania",
+    latitude: -41.2865,
+    longitude: 174.7762,
+    population: 212700,
+    timezone: "Pacific/Auckland"
+  },
+  {
+    id: "perth-au",
+    name: "Perth",
+    country: "Australia",
+    countryCode: "AU",
+    continent: "Oceania",
+    latitude: -31.9505,
+    longitude: 115.8605,
+    population: 2141834,
+    timezone: "Australia/Perth"
+  },
+  {
+    id: "new-orleans-us",
+    name: "New Orleans",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 29.9511,
+    longitude: -90.0715,
+    population: 383997,
+    timezone: "America/Chicago"
+  },
+  {
+    id: "nashville-us",
+    name: "Nashville",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 36.1627,
+    longitude: -86.7816,
+    population: 689447,
+    timezone: "America/Chicago"
+  },
+  {
+    id: "columbus-us",
+    name: "Columbus",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 39.9612,
+    longitude: -82.9988,
+    population: 905748,
+    timezone: "America/New_York"
+  },
+  {
+    id: "las-vegas-us",
+    name: "Las Vegas",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 36.1699,
+    longitude: -115.1398,
+    population: 641903,
+    timezone: "America/Los_Angeles"
+  },
+  {
+    id: "amsterdam-nl",
+    name: "Amsterdam",
+    country: "Netherlands",
+    countryCode: "NL",
+    continent: "Europe",
+    latitude: 52.3676,
+    longitude: 4.9041,
+    population: 872680,
+    timezone: "Europe/Amsterdam"
+  },
+  {
+    id: "prague-cz",
+    name: "Prague",
+    country: "Czech Republic",
+    countryCode: "CZ",
+    continent: "Europe",
+    latitude: 50.0755,
+    longitude: 14.4378,
+    population: 1309000,
+    timezone: "Europe/Prague"
+  },
+  {
+    id: "dublin-ie",
+    name: "Dublin",
+    country: "Ireland",
+    countryCode: "IE",
+    continent: "Europe",
+    latitude: 53.3498,
+    longitude: -6.2603,
+    population: 592713,
+    timezone: "Europe/Dublin"
+  },
+  {
+    id: "copenhagen-dk",
+    name: "Copenhagen",
+    country: "Denmark",
+    countryCode: "DK",
+    continent: "Europe",
+    latitude: 55.6761,
+    longitude: 12.5683,
+    population: 644431,
+    timezone: "Europe/Copenhagen"
+  },
+  {
+    id: "stockholm-se",
+    name: "Stockholm",
+    country: "Sweden",
+    countryCode: "SE",
+    continent: "Europe",
+    latitude: 59.3293,
+    longitude: 18.0686,
+    population: 978770,
+    timezone: "Europe/Stockholm"
+  },
+  {
+    id: "oslo-no",
+    name: "Oslo",
+    country: "Norway",
+    countryCode: "NO",
+    continent: "Europe",
+    latitude: 59.9139,
+    longitude: 10.7522,
+    population: 700000,
+    timezone: "Europe/Oslo"
+  },
+  {
+    id: "zurich-ch",
+    name: "Zurich",
+    country: "Switzerland",
+    countryCode: "CH",
+    continent: "Europe",
+    latitude: 47.3769,
+    longitude: 8.5417,
+    population: 436332,
+    timezone: "Europe/Zurich"
+  },
+  {
+    id: "marseille-fr",
+    name: "Marseille",
+    country: "France",
+    countryCode: "FR",
+    continent: "Europe",
+    latitude: 43.2965,
+    longitude: 5.3698,
+    population: 870731,
+    timezone: "Europe/Paris"
+  },
+  {
+    id: "liverpool-gb",
+    name: "Liverpool",
+    country: "United Kingdom",
+    countryCode: "GB",
+    continent: "Europe",
+    latitude: 53.4084,
+    longitude: -2.9916,
+    population: 498042,
+    timezone: "Europe/London"
+  },
+  {
+    id: "reykjavik-is",
+    name: "Reykjavik",
+    country: "Iceland",
+    countryCode: "IS",
+    continent: "Europe",
+    latitude: 64.1466,
+    longitude: -21.9426,
+    population: 131136,
+    timezone: "Atlantic/Reykjavik"
+  },
+  {
+    id: "split-hr",
+    name: "Split",
+    country: "Croatia",
+    countryCode: "HR",
+    continent: "Europe",
+    latitude: 43.5081,
+    longitude: 16.4402,
+    population: 178102,
+    timezone: "Europe/Zagreb"
+  },
+  {
+    id: "doha-qa",
+    name: "Doha",
+    country: "Qatar",
+    countryCode: "QA",
+    continent: "Asia",
+    latitude: 25.2854,
+    longitude: 51.531,
+    population: 1186023,
+    timezone: "Asia/Qatar"
+  },
+  {
+    id: "abu-dhabi-ae",
+    name: "Abu Dhabi",
+    country: "United Arab Emirates",
+    countryCode: "AE",
+    continent: "Asia",
+    latitude: 24.4539,
+    longitude: 54.3773,
+    population: 1483000,
+    timezone: "Asia/Dubai"
+  },
+  {
+    id: "dubai-ae",
+    name: "Dubai",
+    country: "United Arab Emirates",
+    countryCode: "AE",
+    continent: "Asia",
+    latitude: 25.2048,
+    longitude: 55.2708,
+    population: 3331420,
+    timezone: "Asia/Dubai"
+  },
+  {
+    id: "tbilisi-ge",
+    name: "Tbilisi",
+    country: "Georgia",
+    countryCode: "GE",
+    continent: "Asia",
+    latitude: 41.7151,
+    longitude: 44.8271,
+    population: 1154400,
+    timezone: "Asia/Tbilisi"
+  },
+  {
+    id: "ulaanbaatar-mn",
+    name: "Ulaanbaatar",
+    country: "Mongolia",
+    countryCode: "MN",
+    continent: "Asia",
+    latitude: 47.8864,
+    longitude: 106.9057,
+    population: 1500000,
+    timezone: "Asia/Ulaanbaatar"
+  },
+  {
+    id: "tripoli-ly",
+    name: "Tripoli",
+    country: "Libya",
+    countryCode: "LY",
+    continent: "Africa",
+    latitude: 32.8872,
+    longitude: 13.1913,
+    population: 1150989,
+    timezone: "Africa/Tripoli"
+  },
+  {
+    id: "abuja-ng",
+    name: "Abuja",
+    country: "Nigeria",
+    countryCode: "NG",
+    continent: "Africa",
+    latitude: 9.0765,
+    longitude: 7.3986,
+    population: 3278000,
+    timezone: "Africa/Lagos"
+  },
+  {
+    id: "valencia-es",
+    name: "Valencia",
+    country: "Spain",
+    countryCode: "ES",
+    continent: "Europe",
+    latitude: 39.4699,
+    longitude: -0.3763,
+    population: 791413,
+    timezone: "Europe/Madrid"
+  },
+  {
+    id: "porto-pt",
+    name: "Porto",
+    country: "Portugal",
+    countryCode: "PT",
+    continent: "Europe",
+    latitude: 41.1579,
+    longitude: -8.6291,
+    population: 237591,
+    timezone: "Europe/Lisbon"
   }
 ];

@@ -25,6 +25,8 @@ export type GameStatus = 'in-progress' | 'won' | 'lost';
 export interface PersistedDayState {
   /** America/New_York "YYYY-MM-DD" — must match getEasternDateString() for the stored state to be valid. */
   date: string;
+  /** Easy and Hard have separate daily targets, so progress is tracked per pool. */
+  difficulty: string;
   targetCityId: string;
   guessedCityIds: string[];
   status: GameStatus;

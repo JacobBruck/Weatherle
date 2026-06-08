@@ -22,8 +22,8 @@ export interface UseGameStateResult {
 
 const cityById = new Map(CITIES.map((c) => [c.id, c]));
 
-function freshState(date: string, targetCityId: string): PersistedDayState {
-  return { date, targetCityId, guessedCityIds: [], status: 'in-progress' };
+function freshState(date: string, difficulty: string, targetCityId: string): PersistedDayState {
+  return { date, difficulty, targetCityId, guessedCityIds: [], status: 'in-progress' };
 }
 
 function statusFor(guessedCount: number, won: boolean): GameStatus {
@@ -34,22 +34,24 @@ function statusFor(guessedCount: number, won: boolean): GameStatus {
 
 /**
  * Orchestrates guesses, win/loss detection, and localStorage persistence for "today".
- * Re-initializes whenever the target city or date changes (e.g. Eastern midnight rollover).
+ * Easy and Hard have different daily targets, so progress is tracked separately per
+ * (date, difficulty) pair — switching pools mid-day resumes (or starts) that pool's own run.
+ * Re-initializes whenever the target city, date, or difficulty changes.
  */
-export function useGameState(targetCity: City, dateString: string): UseGameStateResult {
+export function useGameState(targetCity: City, dateString: string, difficulty: string): UseGameStateResult {
   const [persisted, setPersisted] = useState<PersistedDayState>(() => {
     pruneOldDays(dateString);
-    return hydrateOrInit(dateString, targetCity.id);
+    return hydrateOrInit(dateString, difficulty, targetCity.id);
   });
 
-  // Re-sync when the day or target changes (daily reset / rollover while tab is open).
+  // Re-sync when the day, difficulty, or target changes (daily reset / rollover / pool switch while tab is open).
   useEffect(() => {
     setPersisted((prev) => {
-      if (prev.date === dateString && prev.targetCityId === targetCity.id) return prev;
+      if (prev.date === dateString && prev.difficulty === difficulty && prev.targetCityId === targetCity.id) return prev;
       pruneOldDays(dateString);
-      return hydrateOrInit(dateString, targetCity.id);
+      return hydrateOrInit(dateString, difficulty, targetCity.id);
     });
-  }, [dateString, targetCity.id]);
+  }, [dateString, difficulty, targetCity.id]);
 
   const entries = useMemo<GuessEntry[]>(
     () =>
@@ -68,6 +70,7 @@ export function useGameState(targetCity: City, dateString: string): UseGameState
     const won = city.id === targetCity.id;
     const next: PersistedDayState = {
       date: dateString,
+      difficulty,
       targetCityId: targetCity.id,
       guessedCityIds,
       status: statusFor(guessedCityIds.length, won),
@@ -85,10 +88,10 @@ export function useGameState(targetCity: City, dateString: string): UseGameState
   };
 }
 
-function hydrateOrInit(date: string, targetCityId: string): PersistedDayState {
-  const stored = loadDayState(date);
+function hydrateOrInit(date: string, difficulty: string, targetCityId: string): PersistedDayState {
+  const stored = loadDayState(date, difficulty);
   if (stored && stored.targetCityId === targetCityId) return stored;
-  const fresh = freshState(date, targetCityId);
+  const fresh = freshState(date, difficulty, targetCityId);
   saveDayState(fresh);
   return fresh;
 }
