@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CITIES } from '../data/cities';
+import { GUESS_CITIES } from '../data/guessCities';
 import type { City } from '../types/city';
 import type { GameStatus, HintResult, PersistedDayState } from '../types/game';
 import { compareCities } from '../utils/compare';
@@ -20,7 +21,7 @@ export interface UseGameStateResult {
   alreadyGuessed: boolean;
 }
 
-const cityById = new Map(CITIES.map((c) => [c.id, c]));
+const cityById = new Map([...CITIES, ...GUESS_CITIES].map((c) => [c.id, c]));
 
 function freshState(date: string, difficulty: string, targetCityId: string): PersistedDayState {
   return { date, difficulty, targetCityId, guessedCityIds: [], status: 'in-progress' };
