@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CITIES } from './data/cities';
 import { useDailyCity } from './hooks/useDailyCity';
 import { useWeather } from './hooks/useWeather';
 import { useGameState } from './hooks/useGameState';
 import { useUnlimitedGame } from './hooks/useUnlimitedGame';
 import { useGameMode } from './hooks/useGameMode';
+import { useDifficulty, citiesForDifficulty } from './hooks/useDifficulty';
 import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { useColorScheme } from './hooks/useColorScheme';
 import { getThemeClassName } from './utils/weatherCodes';
@@ -30,14 +31,21 @@ function App() {
   const [unit, setUnit] = useTemperatureUnit();
   const [scheme, setScheme] = useColorScheme();
   const [mode, setMode] = useGameMode();
+  const [difficulty, setDifficulty] = useDifficulty();
   const [showModePrompt, setShowModePrompt] = useState(() => !readModePromptSeen());
 
-  const daily = useDailyCity();
+  // Difficulty only governs the Unlimited practice pool — the Daily Challenge target must
+  // stay drawn from the full city list so it's the same mystery city for every player
+  // (and so its name is always something the autocomplete can find, regardless of pool size).
+  const unlimitedCities = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
+
+  const daily = useDailyCity(CITIES);
   const dailyGame = useGameState(daily.city, daily.dateString);
-  const unlimited = useUnlimitedGame(CITIES);
+  const unlimited = useUnlimitedGame(unlimitedCities);
 
   const isDaily = mode === 'daily';
   const activeCity = isDaily ? daily.city : unlimited.city;
+  const guessableCities = isDaily ? CITIES : unlimitedCities;
   const weatherCacheKey = isDaily ? daily.dateString : `unlimited-${unlimited.roundId}`;
   const { data, status: weatherStatus, error } = useWeather(activeCity, weatherCacheKey);
 
@@ -61,17 +69,25 @@ function App() {
 
   return (
     <div className={`${styles.page} ${themeClass} bg-transition`}>
-      {showModePrompt && <ModeSelectModal onSelect={chooseMode} />}
+      {showModePrompt && (
+        <ModeSelectModal onSelect={chooseMode} difficulty={difficulty} onDifficultyChange={setDifficulty} />
+      )}
+
+      <div className={styles.topLeft}>
+        <span className={styles.modeBadge}>
+          {isDaily ? '📅 Daily Challenge' : '♾️ Unlimited'}
+        </span>
+      </div>
 
       <div className={styles.topRight}>
         <button
           type="button"
           className={styles.iconButton}
-          aria-label={isDaily ? 'Switch to Unlimited mode' : 'Switch to Daily Challenge'}
-          title={isDaily ? 'Switch to Unlimited mode' : 'Switch to Daily Challenge'}
-          onClick={() => setMode(isDaily ? 'unlimited' : 'daily')}
+          aria-label="Game settings — switch mode or city pool"
+          title="Game settings — switch mode or city pool"
+          onClick={() => setShowModePrompt(true)}
         >
-          {isDaily ? '♾️' : '📅'}
+          ⚙️
         </button>
         {!isDaily && (
           <button
@@ -130,6 +146,7 @@ function App() {
         />
 
         <GuessInput
+          cities={guessableCities}
           onSubmitGuess={submitGuess}
           disabled={isOver}
           guessedCityIds={entries.map((e) => e.city.id)}

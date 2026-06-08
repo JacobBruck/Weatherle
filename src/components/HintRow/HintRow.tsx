@@ -25,7 +25,18 @@ const POPULATION_LABELS: Record<PopulationComparison, Record<PopulationMagnitude
 };
 
 function populationLabel(hint: HintResult): string {
+  if (hint.isCorrect) return 'Correct';
   return POPULATION_LABELS[hint.populationComparison][hint.populationMagnitude];
+}
+
+function formatPopulation(population: number): string {
+  if (population >= 1_000_000) {
+    return `${(population / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  }
+  if (population >= 1_000) {
+    return `${Math.round(population / 1000)}k`;
+  }
+  return `${population}`;
 }
 
 export function HintRow({ guess, hint, unit }: HintRowProps) {
@@ -57,7 +68,9 @@ export function HintRow({ guess, hint, unit }: HintRowProps) {
 
         <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
           <span className={styles.chipLabel}>Population</span>
-          <span className={styles.chipValue}>{populationLabel(hint)}</span>
+          <span className={styles.chipValue}>
+            {formatPopulation(guess.population)} · {populationLabel(hint)}
+          </span>
         </div>
 
         <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>

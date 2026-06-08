@@ -3657,5 +3657,407 @@ export const CITIES: City[] = [
     longitude: 118.05,
     population: 1865385,
     timezone: "Asia/Shanghai"
+  },
+
+  // --- Hand-appended holiday/vacation destinations -------------------------------------
+  // Added for the "easy" famous-cities pool. Appended here (rather than folded into the
+  // generator's alphabetical sort) so every existing entry keeps its index — the daily
+  // pick is `daysSinceEpoch(date) % cities.length`, and reordering would scramble which
+  // city already-shipped days point to.
+  {
+    id: "cancun-mx",
+    name: "Cancun",
+    country: "Mexico",
+    countryCode: "MX",
+    continent: "North America",
+    latitude: 21.1619,
+    longitude: -86.8515,
+    population: 888797,
+    timezone: "America/Cancun"
+  },
+  {
+    id: "punta-cana-do",
+    name: "Punta Cana",
+    country: "Dominican Republic",
+    countryCode: "DO",
+    continent: "North America",
+    latitude: 18.5601,
+    longitude: -68.3725,
+    population: 47536,
+    timezone: "America/Santo_Domingo"
+  },
+  {
+    id: "honolulu-us",
+    name: "Honolulu",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 21.3069,
+    longitude: -157.8583,
+    population: 350964,
+    timezone: "Pacific/Honolulu"
+  },
+  {
+    id: "phuket-th",
+    name: "Phuket",
+    country: "Thailand",
+    countryCode: "TH",
+    continent: "Asia",
+    latitude: 7.8804,
+    longitude: 98.3923,
+    population: 95880,
+    timezone: "Asia/Bangkok"
+  },
+  {
+    id: "denpasar-id",
+    name: "Denpasar",
+    country: "Indonesia",
+    countryCode: "ID",
+    continent: "Asia",
+    latitude: -8.6705,
+    longitude: 115.2126,
+    population: 880600,
+    timezone: "Asia/Makassar"
+  },
+  {
+    id: "ibiza-es",
+    name: "Ibiza",
+    country: "Spain",
+    countryCode: "ES",
+    continent: "Europe",
+    latitude: 38.9067,
+    longitude: 1.4206,
+    population: 50000,
+    timezone: "Europe/Madrid"
+  },
+  {
+    id: "santorini-gr",
+    name: "Santorini",
+    country: "Greece",
+    countryCode: "GR",
+    continent: "Europe",
+    latitude: 36.3932,
+    longitude: 25.4615,
+    population: 15500,
+    timezone: "Europe/Athens"
+  },
+  {
+    id: "mykonos-gr",
+    name: "Mykonos",
+    country: "Greece",
+    countryCode: "GR",
+    continent: "Europe",
+    latitude: 37.4467,
+    longitude: 25.3289,
+    population: 10500,
+    timezone: "Europe/Athens"
+  },
+  {
+    id: "male-mv",
+    name: "Male",
+    country: "Maldives",
+    countryCode: "MV",
+    continent: "Asia",
+    latitude: 4.1755,
+    longitude: 73.5093,
+    population: 133412,
+    timezone: "Indian/Maldives"
+  },
+  {
+    id: "nassau-bs",
+    name: "Nassau",
+    country: "Bahamas",
+    countryCode: "BS",
+    continent: "North America",
+    latitude: 25.048,
+    longitude: -77.3554,
+    population: 274400,
+    timezone: "America/Nassau"
+  },
+  {
+    id: "montego-bay-jm",
+    name: "Montego Bay",
+    country: "Jamaica",
+    countryCode: "JM",
+    continent: "North America",
+    latitude: 18.4762,
+    longitude: -77.8939,
+    population: 110115,
+    timezone: "America/Jamaica"
+  },
+  {
+    id: "cabo-san-lucas-mx",
+    name: "Cabo San Lucas",
+    country: "Mexico",
+    countryCode: "MX",
+    continent: "North America",
+    latitude: 22.8905,
+    longitude: -109.9167,
+    population: 81111,
+    timezone: "America/Mazatlan"
+  },
+  {
+    id: "acapulco-mx",
+    name: "Acapulco",
+    country: "Mexico",
+    countryCode: "MX",
+    continent: "North America",
+    latitude: 16.8531,
+    longitude: -99.8237,
+    population: 779566,
+    timezone: "America/Mexico_City"
+  },
+  {
+    id: "zanzibar-city-tz",
+    name: "Zanzibar City",
+    country: "Tanzania",
+    countryCode: "TZ",
+    continent: "Africa",
+    latitude: -6.1659,
+    longitude: 39.2026,
+    population: 403658,
+    timezone: "Africa/Dar_es_Salaam"
+  },
+  {
+    id: "victoria-sc",
+    name: "Victoria",
+    country: "Seychelles",
+    countryCode: "SC",
+    continent: "Africa",
+    latitude: -4.6191,
+    longitude: 55.4513,
+    population: 26450,
+    timezone: "Indian/Mahe"
+  },
+  {
+    id: "suva-fj",
+    name: "Suva",
+    country: "Fiji",
+    countryCode: "FJ",
+    continent: "Oceania",
+    latitude: -18.1416,
+    longitude: 178.4419,
+    population: 93970,
+    timezone: "Pacific/Fiji"
+  },
+  {
+    id: "bridgetown-bb",
+    name: "Bridgetown",
+    country: "Barbados",
+    countryCode: "BB",
+    continent: "North America",
+    latitude: 13.0969,
+    longitude: -59.6145,
+    population: 110000,
+    timezone: "America/Barbados"
+  },
+  {
+    id: "oranjestad-aw",
+    name: "Oranjestad",
+    country: "Aruba",
+    countryCode: "AW",
+    continent: "North America",
+    latitude: 12.5246,
+    longitude: -70.027,
+    population: 29050,
+    timezone: "America/Aruba"
+  },
+  {
+    id: "panaji-in",
+    name: "Panaji",
+    country: "India",
+    countryCode: "IN",
+    continent: "Asia",
+    latitude: 15.4909,
+    longitude: 73.8278,
+    population: 114759,
+    timezone: "Asia/Kolkata"
+  },
+  {
+    id: "gold-coast-au",
+    name: "Gold Coast",
+    country: "Australia",
+    countryCode: "AU",
+    continent: "Oceania",
+    latitude: -28.0167,
+    longitude: 153.4,
+    population: 640000,
+    timezone: "Australia/Brisbane"
+  },
+  {
+    id: "cannes-fr",
+    name: "Cannes",
+    country: "France",
+    countryCode: "FR",
+    continent: "Europe",
+    latitude: 43.5528,
+    longitude: 7.0174,
+    population: 74545,
+    timezone: "Europe/Paris"
+  },
+  {
+    id: "nice-fr",
+    name: "Nice",
+    country: "France",
+    countryCode: "FR",
+    continent: "Europe",
+    latitude: 43.7102,
+    longitude: 7.262,
+    population: 342295,
+    timezone: "Europe/Paris"
+  },
+  {
+    id: "marbella-es",
+    name: "Marbella",
+    country: "Spain",
+    countryCode: "ES",
+    continent: "Europe",
+    latitude: 36.5101,
+    longitude: -4.8825,
+    population: 147967,
+    timezone: "Europe/Madrid"
+  },
+  {
+    id: "palma-de-mallorca-es",
+    name: "Palma de Mallorca",
+    country: "Spain",
+    countryCode: "ES",
+    continent: "Europe",
+    latitude: 39.5696,
+    longitude: 2.6502,
+    population: 416065,
+    timezone: "Europe/Madrid"
+  },
+  {
+    id: "positano-it",
+    name: "Positano",
+    country: "Italy",
+    countryCode: "IT",
+    continent: "Europe",
+    latitude: 40.628,
+    longitude: 14.4848,
+    population: 3935,
+    timezone: "Europe/Rome"
+  },
+  {
+    id: "capri-it",
+    name: "Capri",
+    country: "Italy",
+    countryCode: "IT",
+    continent: "Europe",
+    latitude: 40.5532,
+    longitude: 14.2429,
+    population: 7188,
+    timezone: "Europe/Rome"
+  },
+  {
+    id: "hvar-hr",
+    name: "Hvar",
+    country: "Croatia",
+    countryCode: "HR",
+    continent: "Europe",
+    latitude: 43.1729,
+    longitude: 16.4413,
+    population: 4253,
+    timezone: "Europe/Zagreb"
+  },
+  {
+    id: "queenstown-nz",
+    name: "Queenstown",
+    country: "New Zealand",
+    countryCode: "NZ",
+    continent: "Oceania",
+    latitude: -45.0312,
+    longitude: 168.6626,
+    population: 16400,
+    timezone: "Pacific/Auckland"
+  },
+  {
+    id: "papeete-pf",
+    name: "Papeete",
+    country: "French Polynesia",
+    countryCode: "PF",
+    continent: "Oceania",
+    latitude: -17.5516,
+    longitude: -149.5585,
+    population: 26050,
+    timezone: "Pacific/Tahiti"
+  },
+  {
+    id: "cartagena-co",
+    name: "Cartagena",
+    country: "Colombia",
+    countryCode: "CO",
+    continent: "South America",
+    latitude: 10.391,
+    longitude: -75.4794,
+    population: 1028000,
+    timezone: "America/Bogota"
+  },
+  {
+    id: "tulum-mx",
+    name: "Tulum",
+    country: "Mexico",
+    countryCode: "MX",
+    continent: "North America",
+    latitude: 20.2114,
+    longitude: -87.4654,
+    population: 38454,
+    timezone: "America/Cancun"
+  },
+  {
+    id: "phu-quoc-vn",
+    name: "Phu Quoc",
+    country: "Vietnam",
+    countryCode: "VN",
+    continent: "Asia",
+    latitude: 10.227,
+    longitude: 103.9603,
+    population: 179480,
+    timezone: "Asia/Ho_Chi_Minh"
+  },
+  {
+    id: "boracay-ph",
+    name: "Boracay",
+    country: "Philippines",
+    countryCode: "PH",
+    continent: "Asia",
+    latitude: 11.9674,
+    longitude: 121.9248,
+    population: 80000,
+    timezone: "Asia/Manila"
+  },
+  {
+    id: "saint-tropez-fr",
+    name: "Saint-Tropez",
+    country: "France",
+    countryCode: "FR",
+    continent: "Europe",
+    latitude: 43.2677,
+    longitude: 6.6407,
+    population: 4103,
+    timezone: "Europe/Paris"
+  },
+  {
+    id: "sharm-el-sheikh-eg",
+    name: "Sharm El Sheikh",
+    country: "Egypt",
+    countryCode: "EG",
+    continent: "Africa",
+    latitude: 27.9158,
+    longitude: 34.33,
+    population: 73000,
+    timezone: "Africa/Cairo"
+  },
+  {
+    id: "antalya-tr",
+    name: "Antalya",
+    country: "Turkey",
+    countryCode: "TR",
+    continent: "Asia",
+    latitude: 36.8969,
+    longitude: 30.7133,
+    population: 1300000,
+    timezone: "Europe/Istanbul"
   }
 ];

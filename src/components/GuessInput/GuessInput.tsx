@@ -1,10 +1,10 @@
 import { useId, useMemo, useState } from 'react';
 import type { KeyboardEvent } from 'react';
-import { CITIES } from '../../data/cities';
 import type { City } from '../../types/city';
 import styles from './GuessInput.module.css';
 
 interface GuessInputProps {
+  cities: City[];
   onSubmitGuess: (city: City) => void;
   disabled: boolean;
   guessedCityIds: string[];
@@ -19,7 +19,7 @@ function matchesQuery(city: City, query: string): boolean {
   return city.name.toLowerCase().startsWith(q) || city.country.toLowerCase().startsWith(q) || city.name.toLowerCase().includes(q);
 }
 
-export function GuessInput({ onSubmitGuess, disabled, guessedCityIds, placeholder }: GuessInputProps) {
+export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, placeholder }: GuessInputProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -31,7 +31,7 @@ export function GuessInput({ onSubmitGuess, disabled, guessedCityIds, placeholde
     if (!query.trim()) return [];
     const startsWith: City[] = [];
     const includes: City[] = [];
-    for (const city of CITIES) {
+    for (const city of cities) {
       if (guessedSet.has(city.id)) continue;
       const name = city.name.toLowerCase();
       const q = query.trim().toLowerCase();
@@ -40,7 +40,7 @@ export function GuessInput({ onSubmitGuess, disabled, guessedCityIds, placeholde
       if (startsWith.length + includes.length >= MAX_SUGGESTIONS * 3) break;
     }
     return [...startsWith, ...includes].slice(0, MAX_SUGGESTIONS);
-  }, [query, guessedSet]);
+  }, [query, guessedSet, cities]);
 
   function optionId(index: number): string {
     return `${listboxId}-option-${index}`;

@@ -13,6 +13,12 @@
   --glass-bg: rgba(255, 255, 255, 0.2);
   --glass-border: rgba(255, 255, 255, 0.32);
   --glass-shadow: 0 10px 38px rgba(0, 0, 0, 0.32);
+  /* Nearly-opaque variant for popups that should read clearly above the page, not blend into it. */
+  --modal-bg: rgba(26, 30, 44, 0.95);
+
+  /* Segmented-pill toggles (°F/°C, light/dark, etc.) — track + active-segment fills */
+  --toggle-track-bg: rgba(255, 255, 255, 0.06);
+  --toggle-active-bg: rgba(255, 255, 255, 0.22);
 
   /* Sits between the weather-gradient background and the glass UI, making cards stand out
      and (in light mode) keeping dark text legible against any weather-condition gradient. */
@@ -33,8 +39,12 @@
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-border: rgba(255, 255, 255, 0.7);
   --glass-shadow: 0 10px 34px rgba(30, 41, 59, 0.16);
+  --modal-bg: rgba(248, 249, 252, 0.97);
 
-  --page-overlay: rgba(255, 255, 255, 0.6);
+  --toggle-track-bg: rgba(26, 30, 41, 0.07);
+  --toggle-active-bg: rgba(255, 255, 255, 0.85);
+
+  --page-overlay: rgba(196, 226, 250, 0.65);
 }
 
 * {
