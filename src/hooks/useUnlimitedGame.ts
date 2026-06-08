@@ -27,6 +27,17 @@ export function useUnlimitedGame(cities: City[]): UseUnlimitedGameResult {
   const [entries, setEntries] = useState<GuessEntry[]>([]);
   const [status, setStatus] = useState<GameStatus>('in-progress');
 
+  // When the city pool changes (switching Easy/Hard), start a fresh round right away.
+  // Adjusting state mid-render — rather than in an effect — lands the new target in the
+  // same commit as the new pool, so there's no stale-city flicker or mismatched guess list.
+  const [poolForRound, setPoolForRound] = useState(cities);
+  if (cities !== poolForRound) {
+    setPoolForRound(cities);
+    setRound((prev) => ({ city: randomCity(cities, prev.city.id), id: prev.id + 1 }));
+    setEntries([]);
+    setStatus('in-progress');
+  }
+
   function submitGuess(guess: City) {
     if (status !== 'in-progress') return;
     if (entries.some((entry) => entry.city.id === guess.id)) return;
