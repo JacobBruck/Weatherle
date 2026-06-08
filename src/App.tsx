@@ -5,6 +5,8 @@ import { useGameState } from './hooks/useGameState';
 import { useUnlimitedGame } from './hooks/useUnlimitedGame';
 import { useGameMode } from './hooks/useGameMode';
 import { useDifficulty, citiesForDifficulty } from './hooks/useDifficulty';
+import { CITIES } from './data/cities';
+import { GUESS_CITIES } from './data/guessCities';
 import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { useColorScheme } from './hooks/useColorScheme';
 import { getThemeClassName } from './utils/weatherCodes';
@@ -27,8 +29,8 @@ function App() {
   const [showModePrompt, setShowModePrompt] = useState(true);
 
   // Difficulty scopes both the Daily Challenge and Unlimited mode to the same city pool —
-  // Easy and Hard each get their own deterministic daily target (same for every player
-  // within that pool), and the autocomplete always covers whatever pool is active.
+  // Easy/Medium/Hard each get their own deterministic daily target (same for every player
+  // within that pool). The autocomplete is always the full city list, separate from the pool.
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
   const daily = useDailyCity(pool);
@@ -37,7 +39,12 @@ function App() {
 
   const isDaily = mode === 'daily';
   const activeCity = isDaily ? daily.city : unlimited.city;
-  const guessableCities = pool;
+  // Dropdown covers CITIES (answer pool) + GUESS_CITIES (search-only extras) so players
+  // can type any well-known city they know, even if it isn't a possible answer.
+  const guessableCities = useMemo(
+    () => [...CITIES, ...GUESS_CITIES].sort((a, b) => a.name.localeCompare(b.name)),
+    [],
+  );
   const weatherCacheKey = isDaily ? daily.dateString : `unlimited-${unlimited.roundId}`;
   const { data, status: weatherStatus, error } = useWeather(activeCity, weatherCacheKey);
 
