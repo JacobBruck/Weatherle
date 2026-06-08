@@ -441,6 +441,11 @@ const CITY_VIBES: Record<string, CityVibe> = {
   'abuja-ng': 'capital',
   'valencia-es': 'industrial',
   'porto-pt': 'historical',
+  'new-milford-us': 'historical',
+  'litchfield-us': 'historical',
+  'woodbury-us': 'historical',
+  'somerville-us': 'university',
+  'villanova-us': 'university',
 };
 
 const FALLBACK_VIBE: CityVibe = 'industrial';

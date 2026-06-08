@@ -121,6 +121,12 @@
   gap: 10px;
 }
 
+@media (max-width: 340px) {
+  .difficulty {
+    flex-direction: column;
+  }
+}
+
 .difficultyOption {
   flex: 1;
   display: flex;

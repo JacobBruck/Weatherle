@@ -4383,5 +4383,60 @@ export const CITIES: City[] = [
     longitude: -8.6291,
     population: 237591,
     timezone: "Europe/Lisbon"
+  },
+  {
+    id: "new-milford-us",
+    name: "New Milford",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 41.5776,
+    longitude: -73.4082,
+    population: 26500,
+    timezone: "America/New_York"
+  },
+  {
+    id: "litchfield-us",
+    name: "Litchfield",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 41.7476,
+    longitude: -73.1876,
+    population: 8300,
+    timezone: "America/New_York"
+  },
+  {
+    id: "woodbury-us",
+    name: "Woodbury",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 41.5473,
+    longitude: -73.2004,
+    population: 9800,
+    timezone: "America/New_York"
+  },
+  {
+    id: "somerville-us",
+    name: "Somerville",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 42.3876,
+    longitude: -71.0995,
+    population: 81360,
+    timezone: "America/New_York"
+  },
+  {
+    id: "villanova-us",
+    name: "Villanova",
+    country: "United States",
+    countryCode: "US",
+    continent: "North America",
+    latitude: 40.0362,
+    longitude: -75.3535,
+    population: 6000,
+    timezone: "America/New_York"
   }
 ];

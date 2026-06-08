@@ -403,6 +403,11 @@ const CITY_ELEVATIONS: Record<string, number> = {
   'abuja-ng': 456,
   'valencia-es': 17,
   'porto-pt': 88,
+  'new-milford-us': 82,
+  'litchfield-us': 334,
+  'woodbury-us': 124,
+  'somerville-us': 30,
+  'villanova-us': 117,
 };
 
 const FALLBACK_ELEVATION_M = 0;

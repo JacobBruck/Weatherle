@@ -1,27 +1,31 @@
 import { useState } from 'react';
 import { CITIES } from '../data/cities';
 import { EASY_CITIES } from '../data/easyCities';
+import { MEDIUM_CITIES } from '../data/mediumCities';
 import type { City } from '../types/city';
 
-export type Difficulty = 'easy' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 const STORAGE_KEY = 'weatherle:difficulty';
 
 function readStoredDifficulty(): Difficulty {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw === 'easy' ? 'easy' : 'hard';
+    if (raw === 'easy' || raw === 'medium' || raw === 'hard') return raw;
+    return 'medium';
   } catch {
-    return 'hard';
+    return 'medium';
   }
 }
 
-/** The active city pool for a difficulty: ~100 famous cities (easy) vs. the full ~330-city set (hard). */
+/** The active city pool for a difficulty tier. */
 export function citiesForDifficulty(difficulty: Difficulty): City[] {
-  return difficulty === 'easy' ? EASY_CITIES : CITIES;
+  if (difficulty === 'easy') return EASY_CITIES;
+  if (difficulty === 'medium') return MEDIUM_CITIES;
+  return CITIES;
 }
 
-/** Persisted choice between the easy (famous-cities) and hard (full dataset) city pools. */
+/** Persisted choice between the three city pool tiers. */
 export function useDifficulty(): [Difficulty, (difficulty: Difficulty) => void] {
   const [difficulty, setDifficultyState] = useState<Difficulty>(readStoredDifficulty);
 

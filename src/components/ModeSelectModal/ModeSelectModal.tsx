@@ -61,11 +61,15 @@ export function ModeSelectModal({ onComplete }: ModeSelectModalProps) {
         <div className={styles.difficulty} role="group" aria-label="City pool difficulty">
           <button type="button" className={styles.difficultyOption} onClick={() => onComplete(pendingMode, 'easy')}>
             <span className={styles.difficultyName}>Easy</span>
-            <span className={styles.difficultyHint}>~140 famous &amp; holiday cities</span>
+            <span className={styles.difficultyHint}>~60 world-famous cities</span>
+          </button>
+          <button type="button" className={styles.difficultyOption} onClick={() => onComplete(pendingMode, 'medium')}>
+            <span className={styles.difficultyName}>Medium</span>
+            <span className={styles.difficultyHint}>~150 famous &amp; holiday cities</span>
           </button>
           <button type="button" className={styles.difficultyOption} onClick={() => onComplete(pendingMode, 'hard')}>
             <span className={styles.difficultyName}>Hard</span>
-            <span className={styles.difficultyHint}>~370 cities worldwide</span>
+            <span className={styles.difficultyHint}>~400 cities worldwide</span>
           </button>
         </div>
       </div>
