@@ -37,7 +37,7 @@
   box-shadow: var(--glass-shadow);
 }
 
-.refreshButton {
+.iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,7 +54,7 @@
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
 }
 
-.refreshButton:hover {
+.iconButton:hover {
   background: rgba(255, 255, 255, 0.22);
 }
 

@@ -64,10 +64,19 @@ function App() {
       {showModePrompt && <ModeSelectModal onSelect={chooseMode} />}
 
       <div className={styles.topRight}>
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label={isDaily ? 'Switch to Unlimited mode' : 'Switch to Daily Challenge'}
+          title={isDaily ? 'Switch to Unlimited mode' : 'Switch to Daily Challenge'}
+          onClick={() => setMode(isDaily ? 'unlimited' : 'daily')}
+        >
+          {isDaily ? '♾️' : '📅'}
+        </button>
         {!isDaily && (
           <button
             type="button"
-            className={styles.refreshButton}
+            className={`${styles.iconButton} ${styles.refreshButton}`}
             aria-label="New random city"
             title="New random city"
             onClick={unlimited.newRound}
