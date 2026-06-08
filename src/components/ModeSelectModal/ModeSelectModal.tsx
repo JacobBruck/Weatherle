@@ -39,25 +39,28 @@ export function ModeSelectModal({ onSelect, difficulty, onDifficultyChange }: Mo
           </button>
         </div>
 
-        <div className={styles.difficulty} role="group" aria-label="City pool">
-          <button
-            type="button"
-            className={difficulty === 'easy' ? `${styles.difficultyOption} ${styles.difficultyOptionActive}` : styles.difficultyOption}
-            aria-pressed={difficulty === 'easy'}
-            onClick={() => onDifficultyChange('easy')}
-          >
-            <span className={styles.difficultyName}>Easy</span>
-            <span className={styles.difficultyHint}>~140 famous &amp; holiday cities</span>
-          </button>
-          <button
-            type="button"
-            className={difficulty === 'hard' ? `${styles.difficultyOption} ${styles.difficultyOptionActive}` : styles.difficultyOption}
-            aria-pressed={difficulty === 'hard'}
-            onClick={() => onDifficultyChange('hard')}
-          >
-            <span className={styles.difficultyName}>Hard</span>
-            <span className={styles.difficultyHint}>~370 cities worldwide</span>
-          </button>
+        <div className={styles.difficultySection}>
+          <h3 className={styles.sectionLabel}>City pool</h3>
+          <div className={styles.difficulty} role="group" aria-label="City pool difficulty">
+            <button
+              type="button"
+              className={difficulty === 'easy' ? `${styles.difficultyOption} ${styles.difficultyOptionActive}` : styles.difficultyOption}
+              aria-pressed={difficulty === 'easy'}
+              onClick={() => onDifficultyChange('easy')}
+            >
+              <span className={styles.difficultyName}>Easy</span>
+              <span className={styles.difficultyHint}>~140 famous &amp; holiday cities</span>
+            </button>
+            <button
+              type="button"
+              className={difficulty === 'hard' ? `${styles.difficultyOption} ${styles.difficultyOptionActive}` : styles.difficultyOption}
+              aria-pressed={difficulty === 'hard'}
+              onClick={() => onDifficultyChange('hard')}
+            >
+              <span className={styles.difficultyName}>Hard</span>
+              <span className={styles.difficultyHint}>~370 cities worldwide</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

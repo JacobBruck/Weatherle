@@ -114,6 +114,22 @@
   line-height: 1.35;
 }
 
+.difficultySection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionLabel {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: left;
+}
+
 .difficulty {
   display: flex;
   gap: 10px;
@@ -142,6 +158,13 @@
   transform: translateY(-1px);
 }
 
+/* A thicker, brighter accent ring (not just the shared .optionActive tint) is the
+   cue for which pool is active — bold enough to read at a glance, even on phones. */
+.difficultyOptionActive {
+  border: 2px solid #6cb4ff;
+  box-shadow: 0 0 0 1px rgba(108, 180, 255, 0.45), 0 2px 14px rgba(108, 180, 255, 0.3);
+}
+
 .difficultyName {
   font-weight: 600;
   font-size: 0.95rem;
@@ -152,6 +175,44 @@
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.3;
+}
+
+/* Tighter spacing on phones — the unscaled modal felt crowded and pushed the
+   difficulty picker (the choice players were missing) below the fold. */
+@media (max-width: 420px) {
+  .modal {
+    padding: 22px 16px;
+    gap: 14px;
+  }
+
+  .howToPlay {
+    padding: 12px 14px;
+  }
+
+  .howToPlayText {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .options {
+    gap: 10px;
+  }
+
+  .option {
+    padding: 13px;
+  }
+
+  .optionIcon {
+    font-size: 1.4rem;
+  }
+
+  .optionLabel {
+    font-size: 1rem;
+  }
+
+  .optionHint {
+    font-size: 0.78rem;
+  }
 }
 
 @keyframes fadeIn {
