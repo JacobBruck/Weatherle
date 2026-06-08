@@ -1,3 +1,4 @@
+import { vibeOf } from '../data/cityVibes';
 import type { City } from '../types/city';
 import type { HintResult, PopulationComparison, PopulationMagnitude } from '../types/game';
 import { bearingToCompass, haversineKm, hemisphereOf, initialBearingDeg, kmToMiles } from './geo';
@@ -26,6 +27,8 @@ export function compareCities(guess: City, target: City): HintResult {
     guessHemisphere: hemisphereOf(guess.latitude),
     continentMatch: guess.continent === target.continent,
     countryMatch: guess.countryCode === target.countryCode,
+    vibeMatch: vibeOf(guess) === vibeOf(target),
+    guessVibe: vibeOf(guess),
     populationComparison: populationComparisonOf(guess, target),
     populationMagnitude: populationMagnitudeOf(guess, target),
     distanceKm,

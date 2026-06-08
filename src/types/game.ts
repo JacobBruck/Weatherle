@@ -1,3 +1,4 @@
+import type { CityVibe } from '../data/cityVibes';
 import type { CompassDirection, Hemisphere } from '../utils/geo';
 
 export type PopulationComparison = 'target-bigger' | 'target-smaller' | 'equal';
@@ -9,6 +10,8 @@ export interface HintResult {
   guessHemisphere: Hemisphere;
   continentMatch: boolean;
   countryMatch: boolean;
+  vibeMatch: boolean;
+  guessVibe: CityVibe;
   /** Describes the TARGET relative to the guess — drives an arrow telling the player which way to adjust. */
   populationComparison: PopulationComparison;
   populationMagnitude: PopulationMagnitude;

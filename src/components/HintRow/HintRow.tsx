@@ -1,3 +1,4 @@
+import { VIBE_EMOJI, VIBE_LABELS } from '../../data/cityVibes';
 import type { City } from '../../types/city';
 import type { HintResult, PopulationComparison, PopulationMagnitude } from '../../types/game';
 import { formatDistance, type TemperatureUnit } from '../../utils/temperature';
@@ -64,6 +65,13 @@ export function HintRow({ guess, hint, unit }: HintRowProps) {
         <div className={`${styles.chip} ${matchClass(hint.countryMatch)}`}>
           <span className={styles.chipLabel}>Country</span>
           <span className={styles.chipValue}>{guess.country}</span>
+        </div>
+
+        <div className={`${styles.chip} ${matchClass(hint.vibeMatch)}`}>
+          <span className={styles.chipLabel}>Vibe</span>
+          <span className={styles.chipValue}>
+            <span aria-hidden="true">{VIBE_EMOJI[hint.guessVibe]}</span> {VIBE_LABELS[hint.guessVibe]}
+          </span>
         </div>
 
         <div className={`${styles.chip} ${correctClass(hint.isCorrect)}`}>
