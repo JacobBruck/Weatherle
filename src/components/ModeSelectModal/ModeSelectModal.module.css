@@ -82,22 +82,6 @@
   transform: translateY(-1px);
 }
 
-/* Selected-state shared by mode and difficulty pickers — a clearly different shade
-   plus a darker ring outline so the active pick is unmistakable in either theme. */
-.optionActive,
-.difficultyOptionActive {
-  opacity: 1;
-  background: rgba(77, 166, 255, 0.2);
-  border-color: rgba(28, 92, 156, 0.75);
-  box-shadow: 0 0 0 2px rgba(28, 92, 156, 0.55) inset, 0 2px 12px rgba(28, 92, 156, 0.22);
-}
-
-.optionActive:hover,
-.optionActive:focus-visible {
-  background: rgba(77, 166, 255, 0.26);
-  transform: none;
-}
-
 .optionIcon {
   font-size: 1.6rem;
   line-height: 1;
@@ -114,20 +98,22 @@
   line-height: 1.35;
 }
 
-.difficultySection {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.backButton {
+  align-self: flex-start;
+  margin: -6px 0 -8px;
+  padding: 4px 2px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
 }
 
-.sectionLabel {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  text-align: left;
+.backButton:hover,
+.backButton:focus-visible {
+  color: inherit;
 }
 
 .difficulty {
@@ -156,13 +142,6 @@
 .difficultyOption:focus-visible {
   opacity: 0.85;
   transform: translateY(-1px);
-}
-
-/* A thicker, brighter accent ring (not just the shared .optionActive tint) is the
-   cue for which pool is active — bold enough to read at a glance, even on phones. */
-.difficultyOptionActive {
-  border: 2px solid #6cb4ff;
-  box-shadow: 0 0 0 1px rgba(108, 180, 255, 0.45), 0 2px 14px rgba(108, 180, 255, 0.3);
 }
 
 .difficultyName {

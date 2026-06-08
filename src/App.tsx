@@ -14,6 +14,7 @@ import { GuessHistory } from './components/GuessHistory/GuessHistory';
 import { GameStatus } from './components/GameStatus/GameStatus';
 import { ModeSelectModal } from './components/ModeSelectModal/ModeSelectModal';
 import type { GameMode } from './hooks/useGameMode';
+import type { Difficulty } from './hooks/useDifficulty';
 import styles from './App.module.css';
 
 function App() {
@@ -47,16 +48,15 @@ function App() {
   const isOver = gameStatus !== 'in-progress';
   const revealedCityLabel = isOver ? `${activeCity.name}, ${activeCity.country}` : null;
 
-  function chooseMode(next: GameMode) {
-    setMode(next);
+  function completeSetup(nextMode: GameMode, nextDifficulty: Difficulty) {
+    setMode(nextMode);
+    setDifficulty(nextDifficulty);
     setShowModePrompt(false);
   }
 
   return (
     <div className={`${styles.page} ${themeClass} bg-transition`}>
-      {showModePrompt && (
-        <ModeSelectModal onSelect={chooseMode} difficulty={difficulty} onDifficultyChange={setDifficulty} />
-      )}
+      {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
 
       <div className={styles.topLeft}>
         <span className={styles.modeBadge}>
