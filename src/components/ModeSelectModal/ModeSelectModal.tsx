@@ -69,7 +69,7 @@ export function ModeSelectModal({ onComplete }: ModeSelectModalProps) {
           </button>
           <button type="button" className={styles.difficultyOption} onClick={() => onComplete(pendingMode, 'hard')}>
             <span className={styles.difficultyName}>Hard</span>
-            <span className={styles.difficultyHint}>~400 cities worldwide</span>
+            <span className={styles.difficultyHint}>~500 cities worldwide</span>
           </button>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import type { City } from '../types/city';
 
 /**
- * Dropdown-only cities — these appear in the autocomplete so players can type
- * any well-known city they think of, but they are never chosen as a daily/unlimited
- * answer. Adding them here keeps the answer-pool sizes (and the daily-challenge
- * index) stable while growing the searchable list to ~500 cities.
+ * Additional well-known cities that extend the Hard mode pool (and the autocomplete)
+ * from ~400 to ~500 cities. Easy and Medium pools are unchanged. These are combined
+ * with CITIES in useDifficulty (hard tier) and in the App guessableCities list.
  */
 export const GUESS_CITIES: City[] = [
   // ── Baltic & Northern Europe ─────────────────────────────────────────────

@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { CITIES } from '../data/cities';
 import { EASY_CITIES } from '../data/easyCities';
 import { MEDIUM_CITIES } from '../data/mediumCities';
+import { GUESS_CITIES } from '../data/guessCities';
 import type { City } from '../types/city';
+
+const HARD_CITIES: City[] = [...CITIES, ...GUESS_CITIES];
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -22,7 +25,7 @@ function readStoredDifficulty(): Difficulty {
 export function citiesForDifficulty(difficulty: Difficulty): City[] {
   if (difficulty === 'easy') return EASY_CITIES;
   if (difficulty === 'medium') return MEDIUM_CITIES;
-  return CITIES;
+  return HARD_CITIES;
 }
 
 /** Persisted choice between the three city pool tiers. */

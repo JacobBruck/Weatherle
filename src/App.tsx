@@ -30,7 +30,7 @@ function App() {
 
   // Difficulty scopes both the Daily Challenge and Unlimited mode to the same city pool —
   // Easy/Medium/Hard each get their own deterministic daily target (same for every player
-  // within that pool). The autocomplete is always the full city list, separate from the pool.
+  // within that pool). Hard = all 500 cities. The autocomplete uses the same combined set.
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
   const daily = useDailyCity(pool);
