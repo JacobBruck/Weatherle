@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import type { City } from '../../types/city';
 import styles from './GuessInput.module.css';
@@ -23,7 +23,26 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
+  const [kbOffset, setKbOffset] = useState(0);
   const listboxId = useId();
+
+  // On iOS the keyboard overlays the layout viewport without resizing it, so
+  // position:fixed elements end up behind the keyboard. visualViewport tracks
+  // the visible area and lets us push the dropdown up by the keyboard height.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const offset = window.innerHeight - vv.height - vv.offsetTop;
+      setKbOffset(Math.max(0, offset));
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+    };
+  }, []);
 
   const guessedSet = useMemo(() => new Set(guessedCityIds), [guessedCityIds]);
 
@@ -101,7 +120,12 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
       {open && query.trim() && (
         <>
           <div className={styles.backdrop} aria-hidden="true" onMouseDown={(e) => e.preventDefault()} />
-          <ul className={styles.dropdown + ' glass'} id={listboxId} role="listbox">
+          <ul
+            className={styles.dropdown + ' glass'}
+            id={listboxId}
+            role="listbox"
+            style={kbOffset > 0 ? { bottom: kbOffset + 16 } : undefined}
+          >
           {suggestions.length === 0 && <li className={styles.empty}>No matching cities</li>}
           {suggestions.map((city, index) => (
             <li
