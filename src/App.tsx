@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDailyCity } from './hooks/useDailyCity';
 import { useWeather } from './hooks/useWeather';
 import { useGameState } from './hooks/useGameState';
@@ -11,11 +11,13 @@ import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { useColorScheme } from './hooks/useColorScheme';
 import { getThemeClassName } from './utils/weatherCodes';
 import { trackEvent } from './utils/analytics';
+import { recordResult } from './utils/stats';
 import { WeatherRevealCard } from './components/WeatherRevealCard/WeatherRevealCard';
 import { GuessInput } from './components/GuessInput/GuessInput';
 import { GuessHistory } from './components/GuessHistory/GuessHistory';
 import { GameStatus } from './components/GameStatus/GameStatus';
 import { ModeSelectModal } from './components/ModeSelectModal/ModeSelectModal';
+import { StatsModal } from './components/StatsModal/StatsModal';
 import type { GameMode } from './hooks/useGameMode';
 import type { Difficulty } from './hooks/useDifficulty';
 import styles from './App.module.css';
@@ -25,12 +27,9 @@ function App() {
   const [scheme, setScheme] = useColorScheme();
   const [mode, setMode] = useGameMode();
   const [difficulty, setDifficulty] = useDifficulty();
-  // Always greets the player with the mode-select menu on load — every page refresh, not just once per session.
   const [showModePrompt, setShowModePrompt] = useState(true);
+  const [showStats, setShowStats] = useState(false);
 
-  // Difficulty scopes both the Daily Challenge and Unlimited mode to the same city pool —
-  // Easy/Medium/Hard each get their own deterministic daily target (same for every player
-  // within that pool). Hard = all 500 cities. The autocomplete uses the same combined set.
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
   const daily = useDailyCity(pool);
@@ -39,8 +38,6 @@ function App() {
 
   const isDaily = mode === 'daily';
   const activeCity = isDaily ? daily.city : unlimited.city;
-  // Dropdown covers CITIES (answer pool) + GUESS_CITIES (search-only extras) so players
-  // can type any well-known city they know, even if it isn't a possible answer.
   const guessableCities = useMemo(
     () => [...CITIES, ...GUESS_CITIES].sort((a, b) => a.name.localeCompare(b.name)),
     [],
@@ -56,18 +53,39 @@ function App() {
   const isOver = gameStatus !== 'in-progress';
   const revealedCityLabel = isOver ? `${activeCity.name}, ${activeCity.country}` : null;
 
+  // Record stats when a game completes, then auto-show the stats modal.
+  // prevStatus refs prevent recording on page-load if the game was already done.
+  const prevDailyStatus = useRef(dailyGame.status);
+  const prevUnlimitedStatus = useRef(unlimited.status);
+
+  useEffect(() => {
+    const prev = prevDailyStatus.current;
+    prevDailyStatus.current = dailyGame.status;
+    if (prev === 'in-progress' && (dailyGame.status === 'won' || dailyGame.status === 'lost')) {
+      recordResult('daily', difficulty, dailyGame.status === 'won', dailyGame.entries.length, daily.dateString);
+      setTimeout(() => setShowStats(true), 1600);
+    }
+  }, [dailyGame.status]);
+
+  useEffect(() => {
+    const prev = prevUnlimitedStatus.current;
+    prevUnlimitedStatus.current = unlimited.status;
+    if (prev === 'in-progress' && (unlimited.status === 'won' || unlimited.status === 'lost')) {
+      recordResult('unlimited', difficulty, unlimited.status === 'won', unlimited.entries.length, daily.dateString);
+    }
+  }, [unlimited.status]);
+
   function completeSetup(nextMode: GameMode, nextDifficulty: Difficulty) {
     setMode(nextMode);
     setDifficulty(nextDifficulty);
     setShowModePrompt(false);
-    // One event per "version" of the game played — lets the GA dashboard break plays
-    // down by mode/difficulty, and (via GA's built-in geo data) by country and region.
     trackEvent('game_start', { mode: nextMode, difficulty: nextDifficulty });
   }
 
   return (
     <div className={`${styles.page} ${themeClass} bg-transition`}>
       {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
+      {showStats && <StatsModal mode={mode} difficulty={difficulty} onClose={() => setShowStats(false)} />}
 
       <div className={styles.topLeft}>
         <span className={styles.modeBadge}>
@@ -76,6 +94,15 @@ function App() {
       </div>
 
       <div className={styles.topRight}>
+        <button
+          type="button"
+          className={styles.iconButton}
+          aria-label="View statistics"
+          title="View statistics"
+          onClick={() => setShowStats(true)}
+        >
+          📊
+        </button>
         <button
           type="button"
           className={styles.iconButton}
