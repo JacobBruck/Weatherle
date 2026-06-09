@@ -33,8 +33,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
     const vv = window.visualViewport;
     if (!vv) return;
     const update = () => {
-      const offset = window.innerHeight - vv.height - vv.offsetTop;
-      setKbOffset(Math.max(0, offset));
+      setKbOffset(Math.max(0, window.innerHeight - vv.height));
     };
     vv.addEventListener('resize', update);
     vv.addEventListener('scroll', update);
