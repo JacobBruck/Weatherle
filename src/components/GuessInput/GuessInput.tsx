@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import type { City } from '../../types/city';
 import styles from './GuessInput.module.css';
@@ -24,16 +24,27 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const [kbOffset, setKbOffset] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
   // On iOS the keyboard overlays the layout viewport without resizing it, so
   // position:fixed elements end up behind the keyboard. visualViewport tracks
-  // the visible area and lets us push the dropdown up by the keyboard height.
+  // the visible area — we push the dropdown up by the keyboard height and
+  // scroll the input to sit just above the keyboard.
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
     const update = () => {
-      setKbOffset(Math.max(0, window.innerHeight - vv.height));
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
+      setKbOffset(keyboardHeight);
+
+      if (keyboardHeight > 0 && inputRef.current) {
+        const rect = inputRef.current.getBoundingClientRect();
+        // Target: input bottom sits 16px above the keyboard
+        const targetBottom = window.innerHeight - keyboardHeight - 16;
+        const delta = rect.bottom - targetBottom;
+        if (delta > 0) window.scrollBy({ top: delta, behavior: 'smooth' });
+      }
     };
     vv.addEventListener('resize', update);
     vv.addEventListener('scroll', update);
@@ -95,6 +106,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   return (
     <div className={styles.wrap}>
       <input
+        ref={inputRef}
         className={styles.input}
         type="text"
         role="combobox"
