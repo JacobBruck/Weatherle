@@ -124,12 +124,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
           setActiveIndex(0);
           setOpen(true);
         }}
-        onFocus={() => {
-          setOpen(true);
-          // Bring the input into view first so the vv resize handler can
-          // correctly position it above the keyboard regardless of scroll position
-          inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }}
+        onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
         onKeyDown={handleKeyDown}
       />
