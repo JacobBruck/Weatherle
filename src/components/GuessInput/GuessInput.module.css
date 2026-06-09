@@ -33,13 +33,11 @@
   animation: backdropIn 0.22s ease;
 }
 
-/* Anchored to the bottom of the viewport (Tradle-style) so it never overlaps hint rows below the input. */
 .dropdown {
-  position: fixed;
-  left: 50%;
-  bottom: max(16px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  width: min(calc(100% - 32px), var(--max-width));
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
   z-index: 50;
   max-height: 45vh;
   overflow-y: auto;
@@ -47,7 +45,7 @@
   padding: 6px;
   list-style: none;
   margin: 0;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.28), var(--glass-shadow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), var(--glass-shadow);
   animation: dropdownIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -74,11 +72,11 @@
 @keyframes dropdownIn {
   from {
     opacity: 0;
-    transform: translate(-50%, 16px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 }
 

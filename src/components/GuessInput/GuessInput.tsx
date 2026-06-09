@@ -23,24 +23,19 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  const [kbOffset, setKbOffset] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
-  // On iOS the keyboard overlays the layout viewport without resizing it, so
-  // position:fixed elements end up behind the keyboard. visualViewport tracks
-  // the visible area — we push the dropdown up by the keyboard height and
-  // scroll the input to sit just above the keyboard.
+  // On iOS the keyboard overlays the layout viewport without resizing it.
+  // visualViewport tracks the visible area — scroll the input to sit just
+  // above the keyboard so the absolute-positioned dropdown has room above it.
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
     const update = () => {
       const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
-      setKbOffset(keyboardHeight);
-
       if (keyboardHeight > 0 && inputRef.current) {
         const rect = inputRef.current.getBoundingClientRect();
-        // Target: input bottom sits 16px above the keyboard
         const targetBottom = window.innerHeight - keyboardHeight - 16;
         const delta = rect.bottom - targetBottom;
         if (delta > 0) window.scrollBy({ top: delta, behavior: 'smooth' });
@@ -135,7 +130,6 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
             className={styles.dropdown + ' glass'}
             id={listboxId}
             role="listbox"
-            style={kbOffset > 0 ? { bottom: kbOffset + 16 } : undefined}
           >
           {suggestions.length === 0 && <li className={styles.empty}>No matching cities</li>}
           {suggestions.map((city, index) => (
