@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import type { City } from '../../types/city';
 import type { GameStatus as GameStatusValue } from '../../types/game';
 import type { GameMode } from '../../hooks/useGameMode';
-import { MAX_GUESSES } from '../../hooks/useGameState';
+import type { Difficulty } from '../../hooks/useDifficulty';
+import { MAX_GUESSES, type GuessEntry } from '../../hooks/useGameState';
 import { useNextCityCountdown } from '../../hooks/useNextCityCountdown';
+import { buildShareText } from '../../utils/share';
 import styles from './GameStatus.module.css';
 
 interface GameStatusProps {
@@ -10,7 +13,51 @@ interface GameStatusProps {
   guessCount: number;
   targetCity: City;
   mode: GameMode;
+  difficulty: Difficulty;
+  dateString: string;
+  entries: GuessEntry[];
   onPlayAgain: () => void;
+}
+
+function ShareButton({
+  entries,
+  mode,
+  difficulty,
+  status,
+  dateString,
+}: {
+  entries: GuessEntry[];
+  mode: GameMode;
+  difficulty: Difficulty;
+  status: GameStatusValue;
+  dateString: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleShare() {
+    const text = buildShareText(entries, mode, difficulty, status, dateString);
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch {
+        // User cancelled or share failed — fall back to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard unavailable — nothing more we can do
+    }
+  }
+
+  return (
+    <button type="button" className={styles.shareButton} onClick={handleShare}>
+      {copied ? '✅ Copied!' : '📋 Share results'}
+    </button>
+  );
 }
 
 function PlayAgainCountdown() {
@@ -34,7 +81,7 @@ function NextRound({ mode, onPlayAgain }: { mode: GameMode; onPlayAgain: () => v
   return mode === 'daily' ? <PlayAgainCountdown /> : <PlayAgainButton onClick={onPlayAgain} />;
 }
 
-export function GameStatus({ status, guessCount, targetCity, mode, onPlayAgain }: GameStatusProps) {
+export function GameStatus({ status, guessCount, targetCity, mode, difficulty, dateString, entries, onPlayAgain }: GameStatusProps) {
   if (status === 'in-progress') {
     return (
       <p className={styles.status}>
@@ -47,6 +94,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, onPlayAgain }
     return (
       <section className={`glass ${styles.banner} ${styles.bannerWon}`} role="status">
         🎉 Solved in {guessCount} {guessCount === 1 ? 'guess' : 'guesses'}!
+        <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
         <NextRound mode={mode} onPlayAgain={onPlayAgain} />
       </section>
     );
@@ -55,6 +103,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, onPlayAgain }
   return (
     <section className={`glass ${styles.banner} ${styles.bannerLost}`} role="status">
       😔 Out of guesses — it was {targetCity.name}, {targetCity.country}.
+      <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
       <NextRound mode={mode} onPlayAgain={onPlayAgain} />
     </section>
   );

@@ -156,6 +156,7 @@ function App() {
           status={weatherStatus}
           error={error}
           revealedCityLabel={revealedCityLabel}
+          revealedCity={isOver ? activeCity : null}
           unit={unit}
           onUnitChange={setUnit}
         />
@@ -165,6 +166,9 @@ function App() {
           guessCount={entries.length}
           targetCity={activeCity}
           mode={mode}
+          difficulty={difficulty}
+          dateString={isDaily ? daily.dateString : weatherCacheKey}
+          entries={entries}
           onPlayAgain={unlimited.newRound}
         />
 

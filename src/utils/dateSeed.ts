@@ -35,6 +35,12 @@ export function daysSinceEpoch(d: Date = new Date()): number {
   return Math.floor((Date.UTC(year, month - 1, day) - EPOCH_MS) / 86_400_000);
 }
 
+/** Stable 1-indexed puzzle number for a "YYYY-MM-DD" Eastern date string — for share text. */
+export function puzzleNumberFromDateString(dateString: string): number {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return Math.floor((Date.UTC(year, month - 1, day) - EPOCH_MS) / 86_400_000) + 1;
+}
+
 /** Minutes to add to UTC to get local time in `timeZone` at instant `d` (e.g. -240 for EDT). */
 function timeZoneOffsetMinutes(d: Date, timeZone: string): number {
   const lookup = partsAsNumbers(

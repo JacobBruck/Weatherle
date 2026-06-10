@@ -1,3 +1,4 @@
+import type { City } from '../../types/city';
 import type { OpenMeteoResponse } from '../../types/weather';
 import type { WeatherStatus } from '../../hooks/useWeather';
 import { getWeatherInfo } from '../../utils/weatherCodes';
@@ -11,8 +12,14 @@ interface WeatherRevealCardProps {
   error: string | null;
   /** Shown once the round is over (won or lost) — e.g. "Tokyo, Japan" */
   revealedCityLabel: string | null;
+  /** The target city, once revealed — used for the Wikipedia link. */
+  revealedCity: City | null;
   unit: TemperatureUnit;
   onUnitChange: (unit: TemperatureUnit) => void;
+}
+
+function wikipediaUrl(city: City): string {
+  return `https://en.wikipedia.org/wiki/${encodeURIComponent(city.name.replace(/ /g, '_'))}`;
 }
 
 function formatTime(iso: string): string {
@@ -25,7 +32,7 @@ function formatTime(iso: string): string {
   return `${hour12}:${minute} ${period}`;
 }
 
-export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit, onUnitChange }: WeatherRevealCardProps) {
+export function WeatherRevealCard({ data, status, error, revealedCityLabel, revealedCity, unit, onUnitChange }: WeatherRevealCardProps) {
   return (
     <section className={`glass ${styles.card}`} aria-live="polite">
       <div className={styles.unitToggle} role="group" aria-label="Units">
@@ -60,6 +67,15 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, unit
       <p className={revealedCityLabel ? `${styles.cityName} ${styles.cityNameRevealed}` : styles.cityName}>
         {revealedCityLabel ?? "Today's weather — where in the world is this?"}
       </p>
+
+      {revealedCity && (
+        <p className={styles.learnMore}>
+          Learn more:{' '}
+          <a href={wikipediaUrl(revealedCity)} target="_blank" rel="noopener noreferrer">
+            {revealedCity.name}
+          </a>
+        </p>
+      )}
 
       {status === 'loading' && <p className={styles.placeholder}>Loading live weather…</p>}
       {status === 'error' && <p className={styles.placeholder}>{error ?? 'Could not load weather data.'}</p>}

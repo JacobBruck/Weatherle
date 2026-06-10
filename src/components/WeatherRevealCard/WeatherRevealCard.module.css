@@ -57,6 +57,19 @@
   font-size: 1.4rem;
 }
 
+.learnMore {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.learnMore a {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .temperature {
   font-size: clamp(4rem, 22vw, 6rem);
   font-weight: 200;
