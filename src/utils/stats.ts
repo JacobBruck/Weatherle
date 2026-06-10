@@ -1,6 +1,10 @@
 import type { AllStats, DifficultyStats } from '../types/stats';
 import type { Difficulty } from '../hooks/useDifficulty';
 import type { GameMode } from '../hooks/useGameMode';
+import type { City } from '../types/city';
+import type { GuessEntry } from '../hooks/useGameState';
+import { vibesOf } from '../data/cityVibes';
+import { elevationOf } from '../data/cityElevations';
 
 const STORAGE_KEY = 'weatherle:stats';
 
@@ -13,6 +17,14 @@ export function blankStats(): DifficultyStats {
     bestGuesses: null,
     guessDistribution: [0, 0, 0, 0, 0, 0, 0, 0],
     lastPlayedDate: null,
+    continentsWon: [],
+    countriesWon: [],
+    vibesWon: [],
+    wonHighElevation: false,
+    wonLowElevation: false,
+    wonMegacity: false,
+    wonSmallTown: false,
+    cumulativeDistanceKm: 0,
   };
 }
 
@@ -33,7 +45,7 @@ function saveAll(stats: AllStats): void {
 
 export function getStats(mode: GameMode, difficulty: Difficulty): DifficultyStats {
   const all = loadAll();
-  return all[mode][difficulty] ?? blankStats();
+  return { ...blankStats(), ...all[mode][difficulty] };
 }
 
 export function recordResult(
@@ -42,20 +54,34 @@ export function recordResult(
   won: boolean,
   guessCount: number,
   dateString: string,
+  targetCity: City,
+  entries: GuessEntry[],
 ): void {
   const all = loadAll();
   if (!all[mode][difficulty]) all[mode][difficulty] = blankStats();
-  const ds = all[mode][difficulty];
+  const ds = { ...blankStats(), ...all[mode][difficulty] };
+  all[mode][difficulty] = ds;
 
   // Prevent double-recording if the daily game was already saved (e.g. page reload)
   if (mode === 'daily' && ds.lastPlayedDate === dateString) return;
 
   ds.gamesPlayed++;
+  ds.cumulativeDistanceKm += entries.reduce((sum, e) => sum + e.hint.distanceKm, 0);
 
   if (won) {
     ds.wins++;
     ds.guessDistribution[Math.min(guessCount - 1, 7)]++;
     if (ds.bestGuesses === null || guessCount < ds.bestGuesses) ds.bestGuesses = guessCount;
+    if (!ds.continentsWon.includes(targetCity.continent)) ds.continentsWon.push(targetCity.continent);
+    if (!ds.countriesWon.includes(targetCity.countryCode)) ds.countriesWon.push(targetCity.countryCode);
+    for (const vibe of vibesOf(targetCity)) {
+      if (!ds.vibesWon.includes(vibe)) ds.vibesWon.push(vibe);
+    }
+    const elevation = elevationOf(targetCity);
+    if (elevation >= 2000) ds.wonHighElevation = true;
+    if (elevation <= 10) ds.wonLowElevation = true;
+    if (targetCity.population >= 10_000_000) ds.wonMegacity = true;
+    if (targetCity.population < 50_000) ds.wonSmallTown = true;
   }
 
   if (mode === 'daily') {
@@ -73,6 +99,14 @@ export function recordResult(
       ds.currentStreak = 0;
     }
     ds.lastPlayedDate = dateString;
+  } else {
+    // Unlimited mode: track consecutive round wins for the "Hot Streak" achievements.
+    if (won) {
+      ds.currentStreak++;
+      ds.bestStreak = Math.max(ds.bestStreak, ds.currentStreak);
+    } else {
+      ds.currentStreak = 0;
+    }
   }
 
   saveAll(all);

@@ -73,7 +73,7 @@ function App() {
     const prev = prevDailyStatus.current;
     prevDailyStatus.current = dailyGame.status;
     if (prev === 'in-progress' && (dailyGame.status === 'won' || dailyGame.status === 'lost')) {
-      recordResult('daily', difficulty, dailyGame.status === 'won', dailyGame.entries.length, daily.dateString);
+      recordResult('daily', difficulty, dailyGame.status === 'won', dailyGame.entries.length, daily.dateString, daily.city, dailyGame.entries);
       if (EASTER_EGG_CITY_IDS.has(daily.city.id)) {
         setEasterEgg({ won: dailyGame.status === 'won', city: daily.city, mode: 'daily' });
       } else {
@@ -86,7 +86,7 @@ function App() {
     const prev = prevUnlimitedStatus.current;
     prevUnlimitedStatus.current = unlimited.status;
     if (prev === 'in-progress' && (unlimited.status === 'won' || unlimited.status === 'lost')) {
-      recordResult('unlimited', difficulty, unlimited.status === 'won', unlimited.entries.length, daily.dateString);
+      recordResult('unlimited', difficulty, unlimited.status === 'won', unlimited.entries.length, daily.dateString, unlimited.city, unlimited.entries);
       if (EASTER_EGG_CITY_IDS.has(unlimited.city.id)) {
         setEasterEgg({ won: unlimited.status === 'won', city: unlimited.city, mode: 'unlimited' });
       }
