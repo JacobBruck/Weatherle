@@ -13,10 +13,22 @@ interface GuessInputProps {
 
 const MAX_SUGGESTIONS = 8;
 
+/** Common abbreviations users might type instead of a country's full name. */
+const COUNTRY_ALIASES: Record<string, string> = {
+  us: 'united states',
+  usa: 'united states',
+};
+
 function matchesQuery(city: City, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return false;
-  return city.name.toLowerCase().startsWith(q) || city.country.toLowerCase().startsWith(q) || city.name.toLowerCase().includes(q);
+  const country = city.country.toLowerCase();
+  return (
+    city.name.toLowerCase().startsWith(q) ||
+    country.startsWith(q) ||
+    city.name.toLowerCase().includes(q) ||
+    COUNTRY_ALIASES[q] === country
+  );
 }
 
 export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, placeholder }: GuessInputProps) {

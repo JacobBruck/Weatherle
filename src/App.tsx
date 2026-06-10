@@ -12,7 +12,10 @@ import { useColorScheme } from './hooks/useColorScheme';
 import { getThemeClassName } from './utils/weatherCodes';
 import { trackEvent } from './utils/analytics';
 import { recordResult } from './utils/stats';
+import { getNewlyUnlocked } from './utils/achievementTracking';
+import type { Achievement } from './utils/achievements';
 import { WeatherRevealCard } from './components/WeatherRevealCard/WeatherRevealCard';
+import { AchievementToast } from './components/AchievementToast/AchievementToast';
 import { GuessInput } from './components/GuessInput/GuessInput';
 import { GuessHistory } from './components/GuessHistory/GuessHistory';
 import { GameStatus } from './components/GameStatus/GameStatus';
@@ -32,6 +35,7 @@ function App() {
   const [showModePrompt, setShowModePrompt] = useState(true);
   const [showStats, setShowStats] = useState(false);
   const [easterEgg, setEasterEgg] = useState<{ won: boolean; city: City; mode: GameMode } | null>(null);
+  const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
 
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
@@ -74,6 +78,8 @@ function App() {
     prevDailyStatus.current = dailyGame.status;
     if (prev === 'in-progress' && (dailyGame.status === 'won' || dailyGame.status === 'lost')) {
       recordResult('daily', difficulty, dailyGame.status === 'won', dailyGame.entries.length, daily.dateString, daily.city, dailyGame.entries);
+      const newly = getNewlyUnlocked('daily', difficulty);
+      if (newly.length > 0) setAchievementQueue((q) => [...q, ...newly]);
       if (EASTER_EGG_CITY_IDS.has(daily.city.id)) {
         setEasterEgg({ won: dailyGame.status === 'won', city: daily.city, mode: 'daily' });
       } else {
@@ -87,6 +93,8 @@ function App() {
     prevUnlimitedStatus.current = unlimited.status;
     if (prev === 'in-progress' && (unlimited.status === 'won' || unlimited.status === 'lost')) {
       recordResult('unlimited', difficulty, unlimited.status === 'won', unlimited.entries.length, daily.dateString, unlimited.city, unlimited.entries);
+      const newly = getNewlyUnlocked('unlimited', difficulty);
+      if (newly.length > 0) setAchievementQueue((q) => [...q, ...newly]);
       if (EASTER_EGG_CITY_IDS.has(unlimited.city.id)) {
         setEasterEgg({ won: unlimited.status === 'won', city: unlimited.city, mode: 'unlimited' });
       }
@@ -104,6 +112,13 @@ function App() {
     <div className={`${styles.page} ${themeClass} bg-transition`}>
       {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
       {showStats && <StatsModal mode={mode} difficulty={difficulty} onClose={() => setShowStats(false)} />}
+      {achievementQueue[0] && (
+        <AchievementToast
+          key={achievementQueue[0].id}
+          achievement={achievementQueue[0]}
+          onDone={() => setAchievementQueue((q) => q.slice(1))}
+        />
+      )}
       {easterEgg && (
         <EasterEggModal
           won={easterEgg.won}
