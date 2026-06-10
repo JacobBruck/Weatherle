@@ -92,7 +92,12 @@ export function HintRow({ guess, hint, unit }: HintRowProps) {
         <div className={`${styles.chip} ${matchClass(hint.vibeMatch)}`}>
           <span className={styles.chipLabel}>Vibe</span>
           <span className={styles.chipValue}>
-            <span aria-hidden="true">{VIBE_EMOJI[hint.guessVibe]}</span> {VIBE_LABELS[hint.guessVibe]}
+            {hint.guessVibes.map((vibe, i) => (
+              <span key={vibe}>
+                {i > 0 && ', '}
+                <span aria-hidden="true">{VIBE_EMOJI[vibe]}</span> {VIBE_LABELS[vibe]}
+              </span>
+            ))}
           </span>
         </div>
 

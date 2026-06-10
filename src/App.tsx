@@ -18,8 +18,10 @@ import { GuessHistory } from './components/GuessHistory/GuessHistory';
 import { GameStatus } from './components/GameStatus/GameStatus';
 import { ModeSelectModal } from './components/ModeSelectModal/ModeSelectModal';
 import { StatsModal } from './components/StatsModal/StatsModal';
+import { EasterEggModal, EASTER_EGG_CITY_IDS } from './components/EasterEggModal/EasterEggModal';
 import type { GameMode } from './hooks/useGameMode';
 import type { Difficulty } from './hooks/useDifficulty';
+import type { City } from './types/city';
 import styles from './App.module.css';
 
 function App() {
@@ -29,12 +31,21 @@ function App() {
   const [difficulty, setDifficulty] = useDifficulty();
   const [showModePrompt, setShowModePrompt] = useState(true);
   const [showStats, setShowStats] = useState(false);
+  const [easterEgg, setEasterEgg] = useState<{ won: boolean; city: City; mode: GameMode } | null>(null);
 
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
+  // Make sure the easter egg cities are reachable in Medium/Hard Unlimited (Easy
+  // stays curated and excludes them).
+  const unlimitedPool = useMemo(() => {
+    if (difficulty === 'easy') return pool;
+    const extras = CITIES.filter((c) => EASTER_EGG_CITY_IDS.has(c.id) && !pool.some((p) => p.id === c.id));
+    return extras.length > 0 ? [...pool, ...extras] : pool;
+  }, [pool, difficulty]);
+
   const daily = useDailyCity(pool);
   const dailyGame = useGameState(daily.city, daily.dateString, difficulty);
-  const unlimited = useUnlimitedGame(pool);
+  const unlimited = useUnlimitedGame(unlimitedPool);
 
   const isDaily = mode === 'daily';
   const activeCity = isDaily ? daily.city : unlimited.city;
@@ -63,7 +74,11 @@ function App() {
     prevDailyStatus.current = dailyGame.status;
     if (prev === 'in-progress' && (dailyGame.status === 'won' || dailyGame.status === 'lost')) {
       recordResult('daily', difficulty, dailyGame.status === 'won', dailyGame.entries.length, daily.dateString);
-      setTimeout(() => setShowStats(true), 1600);
+      if (EASTER_EGG_CITY_IDS.has(daily.city.id)) {
+        setEasterEgg({ won: dailyGame.status === 'won', city: daily.city, mode: 'daily' });
+      } else {
+        setTimeout(() => setShowStats(true), 1600);
+      }
     }
   }, [dailyGame.status]);
 
@@ -72,6 +87,9 @@ function App() {
     prevUnlimitedStatus.current = unlimited.status;
     if (prev === 'in-progress' && (unlimited.status === 'won' || unlimited.status === 'lost')) {
       recordResult('unlimited', difficulty, unlimited.status === 'won', unlimited.entries.length, daily.dateString);
+      if (EASTER_EGG_CITY_IDS.has(unlimited.city.id)) {
+        setEasterEgg({ won: unlimited.status === 'won', city: unlimited.city, mode: 'unlimited' });
+      }
     }
   }, [unlimited.status]);
 
@@ -86,6 +104,17 @@ function App() {
     <div className={`${styles.page} ${themeClass} bg-transition`}>
       {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
       {showStats && <StatsModal mode={mode} difficulty={difficulty} onClose={() => setShowStats(false)} />}
+      {easterEgg && (
+        <EasterEggModal
+          won={easterEgg.won}
+          targetCity={easterEgg.city}
+          onClose={() => {
+            const wasDaily = easterEgg.mode === 'daily';
+            setEasterEgg(null);
+            if (wasDaily) setShowStats(true);
+          }}
+        />
+      )}
 
       <div className={styles.topLeft}>
         <span className={styles.modeBadge}>

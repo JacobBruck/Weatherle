@@ -13,7 +13,7 @@ export interface HintResult {
   continentMatch: boolean;
   countryMatch: boolean;
   vibeMatch: boolean;
-  guessVibe: CityVibe;
+  guessVibes: CityVibe[];
   /** Describes the TARGET relative to the guess — drives an arrow telling the player which way to adjust. */
   populationComparison: PopulationComparison;
   populationMagnitude: PopulationMagnitude;

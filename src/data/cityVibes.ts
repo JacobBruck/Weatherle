@@ -549,6 +549,32 @@ const CITY_VIBES: Record<string, CityVibe> = {
 
 const FALLBACK_VIBE: CityVibe = 'industrial';
 
+/**
+ * National capitals whose primary vibe above is something else (e.g. "historical" or
+ * "vacation") — these cities count as BOTH vibes for matching and display.
+ */
+const ADDITIONAL_CAPITAL_IDS = new Set([
+  'athens-gr',
+  'cairo-eg',
+  'rome-it',
+  'prague-cz',
+  'cape-town-za',
+  'male-mv',
+  'nassau-bs',
+  'victoria-sc',
+  'valletta-mt',
+  'sarajevo-ba',
+  'manama-bh',
+  'santo-domingo-do',
+]);
+
 export function vibeOf(city: City): CityVibe {
   return CITY_VIBES[city.id] ?? FALLBACK_VIBE;
+}
+
+/** All vibes a city counts as — usually one, but capitals tagged with another primary vibe get both. */
+export function vibesOf(city: City): CityVibe[] {
+  const primary = vibeOf(city);
+  if (primary !== 'capital' && ADDITIONAL_CAPITAL_IDS.has(city.id)) return [primary, 'capital'];
+  return [primary];
 }

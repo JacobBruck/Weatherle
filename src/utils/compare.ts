@@ -1,5 +1,5 @@
 import { elevationOf } from '../data/cityElevations';
-import { vibeOf } from '../data/cityVibes';
+import { vibesOf } from '../data/cityVibes';
 import type { City } from '../types/city';
 import type {
   ElevationComparison,
@@ -49,8 +49,8 @@ export function compareCities(guess: City, target: City): HintResult {
     guessHemisphere: hemisphereOf(guess.latitude),
     continentMatch: guess.continent === target.continent,
     countryMatch: guess.countryCode === target.countryCode,
-    vibeMatch: vibeOf(guess) === vibeOf(target),
-    guessVibe: vibeOf(guess),
+    vibeMatch: vibesOf(guess).some((v) => vibesOf(target).includes(v)),
+    guessVibes: vibesOf(guess),
     populationComparison: populationComparisonOf(guess, target),
     populationMagnitude: populationMagnitudeOf(guess, target),
     elevationComparison: elevationComparisonOf(guess, target),
