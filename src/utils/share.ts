@@ -58,5 +58,5 @@ export function buildShareText(
       ? `Weatherle #${puzzleNumberFromDateString(dateString)} (${DIFFICULTY_LABELS[difficulty]}) ${result}`
       : `Weatherle (Unlimited · ${DIFFICULTY_LABELS[difficulty]}) ${result}`;
 
-  return `${title}\n\n${grid}\n\n${window.location.origin}`;
+  return `${title}\n\n${grid}\n\n${window.location.origin}${import.meta.env.BASE_URL}`;
 }
