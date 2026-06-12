@@ -5,6 +5,11 @@ on:
     # 05:10 UTC — just after Eastern midnight in both EST and EDT.
     - cron: '10 5 * * *'
   workflow_dispatch:
+    inputs:
+      send_test_email:
+        description: 'Send a test email even if no easter egg is active today'
+        type: boolean
+        default: false
 
 jobs:
   check:
@@ -17,7 +22,7 @@ jobs:
       - id: check
         run: npx --yes tsx scripts/check-daily-easter-egg.ts
 
-      - if: steps.check.outputs.matched == 'true'
+      - if: steps.check.outputs.matched == 'true' || inputs.send_test_email == true
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -27,4 +32,4 @@ jobs:
           from: Weatherle <${{ secrets.GMAIL_ADDRESS }}>
           to: jpbruck23@gmail.com
           subject: 'WEATHERLE EASTER EGG TODAY'
-          body: ${{ steps.check.outputs.summary }}
+          body: ${{ steps.check.outputs.matched == 'true' && steps.check.outputs.summary || 'Test email from the Daily Easter Egg Check workflow — SMTP is configured correctly.' }}

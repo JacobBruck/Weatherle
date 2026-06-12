@@ -11,10 +11,12 @@ create table if not exists profiles (
 
 alter table profiles enable row level security;
 
+drop policy if exists "Users can view their own profile" on profiles;
 create policy "Users can view their own profile"
   on profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Users can update their own profile" on profiles;
 create policy "Users can update their own profile"
   on profiles for update
   using (auth.uid() = id);
@@ -58,10 +60,12 @@ create index if not exists game_results_daily_idx on game_results (mode, date_st
 
 alter table game_results enable row level security;
 
+drop policy if exists "Users can view their own results" on game_results;
 create policy "Users can view their own results"
   on game_results for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own results" on game_results;
 create policy "Users can insert their own results"
   on game_results for insert
   with check (auth.uid() = user_id);
@@ -92,14 +96,17 @@ create table if not exists stats_summary (
 
 alter table stats_summary enable row level security;
 
+drop policy if exists "Users can view their own stats" on stats_summary;
 create policy "Users can view their own stats"
   on stats_summary for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can upsert their own stats" on stats_summary;
 create policy "Users can upsert their own stats"
   on stats_summary for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update their own stats" on stats_summary;
 create policy "Users can update their own stats"
   on stats_summary for update
   using (auth.uid() = user_id);
