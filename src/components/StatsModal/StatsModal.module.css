@@ -116,6 +116,16 @@
   line-height: 1.3;
 }
 
+/* Today's cross-player average */
+.dailyAverage {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
 /* Guess distribution */
 .section {
   text-align: left;

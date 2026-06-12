@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getStats, msUntilMidnightET } from '../../utils/stats';
 import { getAchievements } from '../../utils/achievements';
+import { useDailyAverage } from '../../hooks/useDailyAverage';
 import type { GameMode } from '../../hooks/useGameMode';
 import type { Difficulty } from '../../hooks/useDifficulty';
 import styles from './StatsModal.module.css';
@@ -8,6 +9,7 @@ import styles from './StatsModal.module.css';
 interface StatsModalProps {
   mode: GameMode;
   difficulty: Difficulty;
+  dateString: string;
   onClose: () => void;
 }
 
@@ -29,12 +31,13 @@ const DIFF_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium'
 
 type Tab = 'stats' | 'achievements';
 
-export function StatsModal({ mode, difficulty, onClose }: StatsModalProps) {
+export function StatsModal({ mode, difficulty, dateString, onClose }: StatsModalProps) {
   const [tab, setTab] = useState<Tab>('stats');
   const [viewMode, setViewMode] = useState<GameMode>(mode);
   const [viewDiff, setViewDiff] = useState<Difficulty>(difficulty);
   const stats = getStats(viewMode, viewDiff);
   const countdown = useCountdown();
+  const dailyAverage = useDailyAverage(dateString, viewDiff, viewMode === 'daily');
 
   const winRate = stats.gamesPlayed > 0 ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
   const maxDist = Math.max(...stats.guessDistribution, 1);
@@ -117,6 +120,13 @@ export function StatsModal({ mode, difficulty, onClose }: StatsModalProps) {
                 <span className={styles.statLabel}>🏆 Best Game</span>
               </div>
             </div>
+
+            {/* Today's cross-player average (daily mode only) */}
+            {viewMode === 'daily' && dailyAverage && dailyAverage.avgGuesses !== null && (
+              <div className={styles.dailyAverage}>
+                📊 Players today are averaging {dailyAverage.avgGuesses.toFixed(1)} guesses
+              </div>
+            )}
 
             {/* Guess distribution */}
             <div className={styles.section}>

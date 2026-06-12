@@ -68,7 +68,7 @@ function DailyAverageNote({ average }: { average: DailyAverage | null }) {
 
   return (
     <span className={styles.bannerSub}>
-      📊 Players today are averaging {average.avgGuesses.toFixed(1)} guesses ({average.winners}/{average.players} solved)
+      📊 Players today are averaging {average.avgGuesses.toFixed(1)} guesses
     </span>
   );
 }

@@ -103,7 +103,9 @@ function App() {
   return (
     <div className={`${styles.page} ${themeClass} bg-transition`}>
       {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
-      {showStats && <StatsModal mode={mode} difficulty={difficulty} onClose={() => setShowStats(false)} />}
+      {showStats && (
+        <StatsModal mode={mode} difficulty={difficulty} dateString={daily.dateString} onClose={() => setShowStats(false)} />
+      )}
       {achievementQueue[0] && (
         <AchievementToast
           key={achievementQueue[0].id}
