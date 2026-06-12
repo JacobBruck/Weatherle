@@ -1,0 +1,30 @@
+name: Daily Easter Egg Check
+
+on:
+  schedule:
+    # 05:10 UTC — just after Eastern midnight in both EST and EDT.
+    - cron: '10 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: check
+        run: npx --yes tsx scripts/check-daily-easter-egg.ts
+
+      - if: steps.check.outputs.matched == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.GMAIL_ADDRESS }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          from: Weatherle <${{ secrets.GMAIL_ADDRESS }}>
+          to: jpbruck23@gmail.com
+          subject: 'WEATHERLE EASTER EGG TODAY'
+          body: ${{ steps.check.outputs.summary }}
