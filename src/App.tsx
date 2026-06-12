@@ -214,6 +214,7 @@ function App() {
           dateString={isDaily ? daily.dateString : weatherCacheKey}
           entries={entries}
           onPlayAgain={unlimited.newRound}
+          onSwitchMode={() => setShowModePrompt(true)}
         />
 
         <GuessInput

@@ -69,12 +69,9 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, reve
       </p>
 
       {revealedCity && (
-        <p className={styles.learnMore}>
-          Learn more:{' '}
-          <a href={wikipediaUrl(revealedCity)} target="_blank" rel="noopener noreferrer">
-            {revealedCity.name}
-          </a>
-        </p>
+        <a className={styles.learnMore} href={wikipediaUrl(revealedCity)} target="_blank" rel="noopener noreferrer">
+          📖 Learn more about {revealedCity.name}
+        </a>
       )}
 
       {status === 'loading' && <p className={styles.placeholder}>Loading live weather…</p>}

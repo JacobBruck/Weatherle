@@ -17,6 +17,7 @@ interface GameStatusProps {
   dateString: string;
   entries: GuessEntry[];
   onPlayAgain: () => void;
+  onSwitchMode: () => void;
 }
 
 function ShareButton({
@@ -77,11 +78,33 @@ function PlayAgainButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-function NextRound({ mode, onPlayAgain }: { mode: GameMode; onPlayAgain: () => void }) {
-  return mode === 'daily' ? <PlayAgainCountdown /> : <PlayAgainButton onClick={onPlayAgain} />;
+function ChangeModesButton({ onClick, fullWidth }: { onClick: () => void; fullWidth?: boolean }) {
+  return (
+    <button type="button" className={fullWidth ? styles.changeModesButtonFull : styles.changeModesButton} onClick={onClick}>
+      🔀 Change modes
+    </button>
+  );
 }
 
-export function GameStatus({ status, guessCount, targetCity, mode, difficulty, dateString, entries, onPlayAgain }: GameStatusProps) {
+function Actions({ mode, onPlayAgain, onSwitchMode }: { mode: GameMode; onPlayAgain: () => void; onSwitchMode: () => void }) {
+  if (mode === 'daily') {
+    return (
+      <>
+        <PlayAgainCountdown />
+        <ChangeModesButton onClick={onSwitchMode} fullWidth />
+      </>
+    );
+  }
+
+  return (
+    <div className={styles.actionsRow}>
+      <PlayAgainButton onClick={onPlayAgain} />
+      <ChangeModesButton onClick={onSwitchMode} />
+    </div>
+  );
+}
+
+export function GameStatus({ status, guessCount, targetCity, mode, difficulty, dateString, entries, onPlayAgain, onSwitchMode }: GameStatusProps) {
   if (status === 'in-progress') {
     return (
       <p className={styles.status}>
@@ -95,7 +118,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, difficulty, d
       <section className={`glass ${styles.banner} ${styles.bannerWon}`} role="status">
         🎉 Solved in {guessCount} {guessCount === 1 ? 'guess' : 'guesses'}!
         <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
-        <NextRound mode={mode} onPlayAgain={onPlayAgain} />
+        <Actions mode={mode} onPlayAgain={onPlayAgain} onSwitchMode={onSwitchMode} />
       </section>
     );
   }
@@ -104,7 +127,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, difficulty, d
     <section className={`glass ${styles.banner} ${styles.bannerLost}`} role="status">
       😔 Out of guesses — it was {targetCity.name}, {targetCity.country}.
       <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
-      <NextRound mode={mode} onPlayAgain={onPlayAgain} />
+      <Actions mode={mode} onPlayAgain={onPlayAgain} onSwitchMode={onSwitchMode} />
     </section>
   );
 }
