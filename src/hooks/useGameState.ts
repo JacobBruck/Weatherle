@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CITIES } from '../data/cities';
 import { GUESS_CITIES } from '../data/guessCities';
 import type { City } from '../types/city';
@@ -38,21 +38,25 @@ function statusFor(guessedCount: number, won: boolean): GameStatus {
  * Easy and Hard have different daily targets, so progress is tracked separately per
  * (date, difficulty) pair — switching pools mid-day resumes (or starts) that pool's own run.
  * Re-initializes whenever the target city, date, or difficulty changes.
+ *
+ * `onComplete`, if provided, fires once when a guess ends the game (win or loss).
  */
-export function useGameState(targetCity: City, dateString: string, difficulty: string): UseGameStateResult {
+export function useGameState(
+  targetCity: City,
+  dateString: string,
+  difficulty: string,
+  onComplete?: (status: 'won' | 'lost', entries: GuessEntry[], city: City) => void,
+): UseGameStateResult {
   const [persisted, setPersisted] = useState<PersistedDayState>(() => {
     pruneOldDays(dateString);
     return hydrateOrInit(dateString, difficulty, targetCity.id);
   });
 
   // Re-sync when the day, difficulty, or target changes (daily reset / rollover / pool switch while tab is open).
-  useEffect(() => {
-    setPersisted((prev) => {
-      if (prev.date === dateString && prev.difficulty === difficulty && prev.targetCityId === targetCity.id) return prev;
-      pruneOldDays(dateString);
-      return hydrateOrInit(dateString, difficulty, targetCity.id);
-    });
-  }, [dateString, difficulty, targetCity.id]);
+  if (persisted.date !== dateString || persisted.difficulty !== difficulty || persisted.targetCityId !== targetCity.id) {
+    pruneOldDays(dateString);
+    setPersisted(hydrateOrInit(dateString, difficulty, targetCity.id));
+  }
 
   const entries = useMemo<GuessEntry[]>(
     () =>
@@ -69,15 +73,20 @@ export function useGameState(targetCity: City, dateString: string, difficulty: s
 
     const guessedCityIds = [...persisted.guessedCityIds, city.id];
     const won = city.id === targetCity.id;
+    const status = statusFor(guessedCityIds.length, won);
     const next: PersistedDayState = {
       date: dateString,
       difficulty,
       targetCityId: targetCity.id,
       guessedCityIds,
-      status: statusFor(guessedCityIds.length, won),
+      status,
     };
     setPersisted(next);
     saveDayState(next);
+
+    if (status !== 'in-progress') {
+      onComplete?.(status, [...entries, { city, hint: compareCities(city, targetCity) }], targetCity);
+    }
   }
 
   return {

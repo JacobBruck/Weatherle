@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import type { City } from '../../types/city';
+import { SPECIAL_MESSAGES } from '../../data/easterEggs';
 import styles from './EasterEggModal.module.css';
 
 interface EasterEggModalProps {
@@ -8,21 +9,6 @@ interface EasterEggModalProps {
   targetCity: City;
   onClose: () => void;
 }
-
-/** Hidden personal touches — shown when these specific cities are the target. */
-const SPECIAL_MESSAGES: Record<string, { win: string; lose: string }> = {
-  'new-milford-us': {
-    win: "Congratulations, you've discovered the Creator's hometown!",
-    lose: "So close! That was the Creator's hometown — New Milford, CT.",
-  },
-  'villanova-us': {
-    win: "Congratulations, you've discovered the Creator's College town! Go Cats!! \\V/",
-    lose: "So close! That was the Creator's College town — Villanova! Go Cats!! \\V/",
-  },
-};
-
-/** Only these cities trigger the cracking-egg easter egg; all other cities use the normal flow. */
-export const EASTER_EGG_CITY_IDS = new Set(Object.keys(SPECIAL_MESSAGES));
 
 export function EasterEggModal({ won, targetCity, onClose }: EasterEggModalProps) {
   const [cracked, setCracked] = useState(false);

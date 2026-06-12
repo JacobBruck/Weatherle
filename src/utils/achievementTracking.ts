@@ -19,14 +19,18 @@ function loadSeen(): { map: SeenMap; isFirstRun: boolean } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return { map: { ...blankSeenMap(), ...JSON.parse(raw) }, isFirstRun: false };
-  } catch {}
+  } catch {
+    // localStorage unavailable — fall through to a fresh map.
+  }
   return { map: blankSeenMap(), isFirstRun: true };
 }
 
 function saveSeen(map: SeenMap): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
-  } catch {}
+  } catch {
+    // localStorage unavailable (private browsing, quota, etc.) — seen state just won't persist.
+  }
 }
 
 /**

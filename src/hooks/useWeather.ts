@@ -32,20 +32,28 @@ function buildUrl(city: City): string {
   return `${BASE_URL}?${params.toString()}`;
 }
 
+/** Cache hits resolve to 'success' immediately; misses fall back to the given status. */
+function resultFor(cacheKey: string, missStatus: WeatherStatus): UseWeatherResult {
+  const cached = cache.get(cacheKey);
+  return cached ? { data: cached, status: 'success', error: null } : { data: null, status: missStatus, error: null };
+}
+
 /** Fetches today's current + daily weather for a city from Open-Meteo. */
 export function useWeather(city: City, dateString: string): UseWeatherResult {
-  const [result, setResult] = useState<UseWeatherResult>({ data: null, status: 'idle', error: null });
+  const cacheKey = `${city.id}:${dateString}`;
+  const [result, setResult] = useState<UseWeatherResult>(() => resultFor(cacheKey, 'loading'));
+  const [resultCacheKey, setResultCacheKey] = useState(cacheKey);
+
+  // Re-derive from the cache when the city/date changes (cache hits skip the fetch effect entirely).
+  if (resultCacheKey !== cacheKey) {
+    setResultCacheKey(cacheKey);
+    setResult(resultFor(cacheKey, 'loading'));
+  }
 
   useEffect(() => {
-    const cacheKey = `${city.id}:${dateString}`;
-    const cached = cache.get(cacheKey);
-    if (cached) {
-      setResult({ data: cached, status: 'success', error: null });
-      return;
-    }
+    if (cache.has(cacheKey)) return;
 
     let cancelled = false;
-    setResult({ data: null, status: 'loading', error: null });
 
     fetch(buildUrl(city))
       .then((res) => {
@@ -66,7 +74,7 @@ export function useWeather(city: City, dateString: string): UseWeatherResult {
     return () => {
       cancelled = true;
     };
-  }, [city, dateString]);
+  }, [cacheKey, city]);
 
   return result;
 }

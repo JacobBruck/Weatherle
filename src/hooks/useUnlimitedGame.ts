@@ -21,8 +21,14 @@ export interface UseUnlimitedGameResult {
   newRound: () => void;
 }
 
-/** Ephemeral practice mode: a fresh random city each round, no daily limit and nothing persisted. */
-export function useUnlimitedGame(cities: City[]): UseUnlimitedGameResult {
+/**
+ * Ephemeral practice mode: a fresh random city each round, no daily limit and nothing persisted.
+ * `onComplete`, if provided, fires once when a guess ends the round (win or loss).
+ */
+export function useUnlimitedGame(
+  cities: City[],
+  onComplete?: (status: 'won' | 'lost', entries: GuessEntry[], city: City) => void,
+): UseUnlimitedGameResult {
   const [round, setRound] = useState(() => ({ city: randomCity(cities), id: 0 }));
   const [entries, setEntries] = useState<GuessEntry[]>([]);
   const [status, setStatus] = useState<GameStatus>('in-progress');
@@ -45,8 +51,11 @@ export function useUnlimitedGame(cities: City[]): UseUnlimitedGameResult {
     const hint = compareCities(guess, round.city);
     const nextEntries = [...entries, { city: guess, hint }];
     const won = guess.id === round.city.id;
+    const nextStatus = won ? 'won' : nextEntries.length >= MAX_GUESSES ? 'lost' : 'in-progress';
     setEntries(nextEntries);
-    setStatus(won ? 'won' : nextEntries.length >= MAX_GUESSES ? 'lost' : 'in-progress');
+    setStatus(nextStatus);
+
+    if (nextStatus !== 'in-progress') onComplete?.(nextStatus, nextEntries, round.city);
   }
 
   function newRound() {
