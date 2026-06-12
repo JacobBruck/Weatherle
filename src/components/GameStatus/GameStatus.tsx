@@ -5,7 +5,9 @@ import type { GameMode } from '../../hooks/useGameMode';
 import type { Difficulty } from '../../hooks/useDifficulty';
 import { MAX_GUESSES, type GuessEntry } from '../../hooks/useGameState';
 import { useNextCityCountdown } from '../../hooks/useNextCityCountdown';
+import { useDailyAverage } from '../../hooks/useDailyAverage';
 import { buildShareText } from '../../utils/share';
+import type { DailyAverage } from '../../utils/stats';
 import styles from './GameStatus.module.css';
 
 interface GameStatusProps {
@@ -61,6 +63,16 @@ function ShareButton({
   );
 }
 
+function DailyAverageNote({ average }: { average: DailyAverage | null }) {
+  if (!average || average.avgGuesses === null) return null;
+
+  return (
+    <span className={styles.bannerSub}>
+      📊 Players today are averaging {average.avgGuesses.toFixed(1)} guesses ({average.winners}/{average.players} solved)
+    </span>
+  );
+}
+
 function PlayAgainCountdown() {
   const countdown = useNextCityCountdown();
   return (
@@ -105,6 +117,8 @@ function Actions({ mode, onPlayAgain, onSwitchMode }: { mode: GameMode; onPlayAg
 }
 
 export function GameStatus({ status, guessCount, targetCity, mode, difficulty, dateString, entries, onPlayAgain, onSwitchMode }: GameStatusProps) {
+  const dailyAverage = useDailyAverage(dateString, difficulty, mode === 'daily' && status !== 'in-progress');
+
   if (status === 'in-progress') {
     return (
       <p className={styles.status}>
@@ -117,6 +131,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, difficulty, d
     return (
       <section className={`glass ${styles.banner} ${styles.bannerWon}`} role="status">
         🎉 Solved in {guessCount} {guessCount === 1 ? 'guess' : 'guesses'}!
+        {mode === 'daily' && <DailyAverageNote average={dailyAverage} />}
         <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
         <Actions mode={mode} onPlayAgain={onPlayAgain} onSwitchMode={onSwitchMode} />
       </section>
@@ -126,6 +141,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, difficulty, d
   return (
     <section className={`glass ${styles.banner} ${styles.bannerLost}`} role="status">
       😔 Out of guesses — it was {targetCity.name}, {targetCity.country}.
+      {mode === 'daily' && <DailyAverageNote average={dailyAverage} />}
       <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
       <Actions mode={mode} onPlayAgain={onPlayAgain} onSwitchMode={onSwitchMode} />
     </section>

@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Supabase credentials
+.env
+
+# Claude Code local state
+.claude/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
