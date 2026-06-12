@@ -11,8 +11,6 @@ interface GuessInputProps {
   placeholder?: string;
 }
 
-const MAX_SUGGESTIONS = 8;
-
 /** Common abbreviations users might type instead of a country's full name. */
 const COUNTRY_ALIASES: Record<string, string> = {
   us: 'united states',
@@ -36,6 +34,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listboxRef = useRef<HTMLUListElement>(null);
   const listboxId = useId();
 
   // On iOS the keyboard overlays the layout viewport without resizing it.
@@ -61,21 +60,27 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
     };
   }, []);
 
+  // Keep the highlighted suggestion visible when navigating a scrollable list with the keyboard.
+  useEffect(() => {
+    if (!open) return;
+    const active = listboxRef.current?.querySelector('[aria-selected="true"]');
+    active?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex, open]);
+
   const guessedSet = useMemo(() => new Set(guessedCityIds), [guessedCityIds]);
 
   const suggestions = useMemo(() => {
     if (!query.trim()) return [];
     const startsWith: City[] = [];
     const includes: City[] = [];
+    const q = query.trim().toLowerCase();
     for (const city of cities) {
       if (guessedSet.has(city.id)) continue;
       const name = city.name.toLowerCase();
-      const q = query.trim().toLowerCase();
       if (name.startsWith(q)) startsWith.push(city);
       else if (matchesQuery(city, query)) includes.push(city);
-      if (startsWith.length + includes.length >= MAX_SUGGESTIONS * 3) break;
     }
-    return [...startsWith, ...includes].slice(0, MAX_SUGGESTIONS);
+    return [...startsWith, ...includes];
   }, [query, guessedSet, cities]);
 
   function optionId(index: number): string {
@@ -139,6 +144,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
         <>
           <div className={styles.backdrop} aria-hidden="true" onMouseDown={(e) => e.preventDefault()} />
           <ul
+            ref={listboxRef}
             className={styles.dropdown + ' glass'}
             id={listboxId}
             role="listbox"
