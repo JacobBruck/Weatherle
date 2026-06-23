@@ -13,12 +13,16 @@ export function useDailyAverage(dateString: string, difficulty: Difficulty, enab
     if (!enabled) return;
 
     let cancelled = false;
-    getDailyAverage(dateString, difficulty).then((result) => {
-      if (!cancelled) setAverage(result);
-    });
+    // Small delay so the write from syncResultToSupabase lands before we read.
+    const timer = setTimeout(() => {
+      getDailyAverage(dateString, difficulty).then((result) => {
+        if (!cancelled) setAverage(result);
+      });
+    }, 800);
 
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, [dateString, difficulty, enabled]);
 
