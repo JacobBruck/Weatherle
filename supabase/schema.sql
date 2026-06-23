@@ -111,18 +111,97 @@ create policy "Users can update their own stats"
   on stats_summary for update
   using (auth.uid() = user_id);
 
--- 4. Cross-player daily averages -------------------------------------------
--- Read-only aggregate view (no user_id exposed) — e.g. "average guesses
--- today" across all players, broken down by puzzle date and difficulty.
+-- 4. Anonymous daily contributions -----------------------------------------
+-- Stores one row per anonymous (signed-out) daily play. `client_id` is a
+-- random UUID generated client-side and stored in localStorage — no personal
+-- information is attached. The primary key prevents the same browser from
+-- being counted twice for the same puzzle.
+create table if not exists daily_anon_results (
+  date_string text not null,
+  difficulty  text not null check (difficulty in ('easy', 'medium', 'hard')),
+  won         boolean not null,
+  guess_count int not null check (guess_count between 1 and 8),
+  client_id   uuid not null,
+  created_at  timestamptz not null default now(),
+  primary key (date_string, difficulty, client_id)
+);
+
+-- No direct insert/select granted to clients — all writes go through the
+-- validated security-definer function below.
+alter table daily_anon_results enable row level security;
+
+-- Validated write path for anonymous results. Runs with elevated privilege
+-- (security definer) so the table itself stays closed to direct client
+-- access. Server-side checks: date must be today or yesterday in UTC (covers
+-- all real-world timezones), and all value constraints mirror the table's
+-- own CHECK constraints.
+create or replace function record_anon_daily_result(
+  p_date_string text,
+  p_difficulty  text,
+  p_won         boolean,
+  p_guess_count int,
+  p_client_id   uuid
+) returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  -- Reject dates more than 1 day in the past or any future date.
+  if p_date_string::date < current_date - 1 or p_date_string::date > current_date then
+    raise exception 'invalid date_string';
+  end if;
+  if p_difficulty not in ('easy', 'medium', 'hard') then
+    raise exception 'invalid difficulty';
+  end if;
+  if p_guess_count < 1 or p_guess_count > 8 then
+    raise exception 'invalid guess_count';
+  end if;
+
+  insert into daily_anon_results (date_string, difficulty, won, guess_count, client_id)
+  values (p_date_string, p_difficulty, p_won, p_guess_count, p_client_id)
+  on conflict (date_string, difficulty, client_id) do nothing;
+end;
+$$;
+
+grant execute on function record_anon_daily_result(text, text, boolean, int, uuid) to anon, authenticated;
+
+-- 5. Cross-player daily averages -------------------------------------------
+-- Combines signed-in results (game_results) with anonymous ones
+-- (daily_anon_results) into a single aggregate per puzzle date + difficulty.
+-- No user_id or client_id is ever exposed.
 create or replace view daily_aggregate_stats as
 select
   date_string,
   difficulty,
-  count(*) as players,
-  count(*) filter (where won) as winners,
-  avg(guess_count) filter (where won) as avg_guesses
-from game_results
-where mode = 'daily' and date_string is not null
+  sum(players)::bigint as players,
+  sum(winners)::bigint as winners,
+  case when sum(winners) > 0
+    then sum(avg_guesses * winners) / sum(winners)
+    else null
+  end as avg_guesses
+from (
+  select
+    date_string,
+    difficulty,
+    count(*)                             as players,
+    count(*) filter (where won)          as winners,
+    avg(guess_count) filter (where won)  as avg_guesses
+  from game_results
+  where mode = 'daily' and date_string is not null
+  group by date_string, difficulty
+
+  union all
+
+  select
+    date_string,
+    difficulty,
+    count(*)                             as players,
+    count(*) filter (where won)          as winners,
+    avg(guess_count) filter (where won)  as avg_guesses
+  from daily_anon_results
+  group by date_string, difficulty
+) combined
 group by date_string, difficulty;
 
 grant select on daily_aggregate_stats to anon, authenticated;

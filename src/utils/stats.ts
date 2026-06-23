@@ -8,6 +8,20 @@ import { elevationOf } from '../data/cityElevations';
 import { supabase } from './supabaseClient';
 
 const STORAGE_KEY = 'weatherle:stats';
+const CLIENT_ID_KEY = 'weatherle:client-id';
+
+function getClientId(): string {
+  try {
+    let id = localStorage.getItem(CLIENT_ID_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(CLIENT_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return crypto.randomUUID();
+  }
+}
 
 export function blankStats(): DifficultyStats {
   return {
@@ -159,7 +173,19 @@ async function syncResultToSupabase(
   if (!supabase) return;
   const { data } = await supabase.auth.getSession();
   const userId = data.session?.user.id;
-  if (!userId) return;
+
+  if (!userId) {
+    if (mode === 'daily') {
+      await supabase.rpc('record_anon_daily_result', {
+        p_date_string: dateString,
+        p_difficulty: difficulty,
+        p_won: won,
+        p_guess_count: guessCount,
+        p_client_id: getClientId(),
+      });
+    }
+    return;
+  }
 
   const distanceThisRound = entries.reduce((sum, e) => sum + e.hint.distanceKm, 0);
 
