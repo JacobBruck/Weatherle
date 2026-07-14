@@ -68,6 +68,33 @@
   margin-left: auto;
 }
 
+/* Laptop and up — the header's centered column is much narrower than the viewport, so
+   the badge and icon row used to sit crowded together in the middle of the screen
+   instead of the corners, competing for space with the centered content as it scrolls
+   underneath. Detach both from that column and pin them to the actual browser-window
+   corners; .header itself stays as an empty (transparent) spacer so the title below
+   doesn't shift up now that its children no longer contribute to its flow height. */
+@media (min-width: 700px) {
+  .header {
+    min-height: 56px;
+  }
+
+  .modeBadge {
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top));
+    left: 16px;
+    z-index: 20;
+  }
+
+  .iconRow {
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+    margin-left: 0;
+    z-index: 20;
+  }
+}
+
 .schemeToggle {
   display: flex;
   flex-shrink: 0;
