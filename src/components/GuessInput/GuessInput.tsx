@@ -18,14 +18,25 @@ const COUNTRY_ALIASES: Record<string, string> = {
   usa: 'united states',
 };
 
+/** Lowercases and strips accents/diacritics so "bogota" matches "Bogotá" — the
+ * city itself still displays with its accent, this is only used for comparison. */
+const DIACRITIC_MARKS = new RegExp('[\\u0300-\\u036f]', 'g');
+
+function normalize(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(DIACRITIC_MARKS, '')
+    .toLowerCase();
+}
+
 function matchesQuery(city: City, query: string): boolean {
-  const q = query.trim().toLowerCase();
+  const q = normalize(query.trim());
   if (!q) return false;
-  const country = city.country.toLowerCase();
+  const country = normalize(city.country);
   return (
-    city.name.toLowerCase().startsWith(q) ||
+    normalize(city.name).startsWith(q) ||
     country.startsWith(q) ||
-    city.name.toLowerCase().includes(q) ||
+    normalize(city.name).includes(q) ||
     COUNTRY_ALIASES[q] === country
   );
 }
@@ -74,10 +85,10 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
     if (!query.trim()) return [];
     const startsWith: City[] = [];
     const includes: City[] = [];
-    const q = query.trim().toLowerCase();
+    const q = normalize(query.trim());
     for (const city of cities) {
       if (guessedSet.has(city.id)) continue;
-      const name = city.name.toLowerCase();
+      const name = normalize(city.name);
       if (name.startsWith(q)) startsWith.push(city);
       else if (matchesQuery(city, query)) includes.push(city);
     }
