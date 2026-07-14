@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getStats, msUntilMidnightET } from '../../utils/stats';
 import { getAchievements } from '../../utils/achievements';
 import { useDailyAverage } from '../../hooks/useDailyAverage';
+import { useModalFocusTrap } from '../../hooks/useModalFocusTrap';
 import type { GameMode } from '../../hooks/useGameMode';
 import type { Difficulty } from '../../hooks/useDifficulty';
 import styles from './StatsModal.module.css';
@@ -42,10 +43,11 @@ export function StatsModal({ mode, difficulty, dateString, onClose }: StatsModal
   const winRate = stats.gamesPlayed > 0 ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
   const maxDist = Math.max(...stats.guessDistribution, 1);
   const achievements = getAchievements(viewMode, viewDiff);
+  const modalRef = useModalFocusTrap<HTMLDivElement>(onClose);
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <div className={`glass ${styles.modal}`} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      <div ref={modalRef} className={`glass ${styles.modal}`} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close statistics">✕</button>
         <h2 className={styles.title}>Statistics</h2>
 
@@ -121,10 +123,16 @@ export function StatsModal({ mode, difficulty, dateString, onClose }: StatsModal
               </div>
             </div>
 
-            {/* Today's cross-player average (daily mode only) */}
-            {viewMode === 'daily' && dailyAverage && dailyAverage.avgGuesses !== null && (
+            {/* Today's cross-player average (daily mode only). Always rendered as soon as we know
+                it applies — reserving this space up front avoids the layout jump that happened
+                when the block only appeared once the (deliberately delayed) fetch resolved. */}
+            {viewMode === 'daily' && (
               <div className={styles.dailyAverage}>
-                📊 Players today are averaging {dailyAverage.avgGuesses.toFixed(1)} guesses
+                {dailyAverage
+                  ? dailyAverage.avgGuesses !== null
+                    ? `📊 Players today are averaging ${dailyAverage.avgGuesses.toFixed(1)} guesses`
+                    : '📊 Be the first to finish today!'
+                  : '📊 Loading today’s average…'}
               </div>
             )}
 

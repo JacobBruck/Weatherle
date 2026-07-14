@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import type { City } from '../../types/city';
+import { formatCityRegion } from '../../utils/formatCityLabel';
 import styles from './GuessInput.module.css';
 
 interface GuessInputProps {
@@ -162,7 +163,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
               onClick={() => selectCity(city)}
             >
               <span className={styles.optionName}>{city.name}</span>
-              <span className={styles.optionCountry}>{city.country}</span>
+              <span className={styles.optionCountry}>{formatCityRegion(city)}</span>
             </li>
           ))}
           </ul>

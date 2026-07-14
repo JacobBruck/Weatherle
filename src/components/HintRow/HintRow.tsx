@@ -1,5 +1,6 @@
 import { elevationOf } from '../../data/cityElevations';
 import { VIBE_EMOJI, VIBE_LABELS } from '../../data/cityVibes';
+import { formatCityRegion } from '../../utils/formatCityLabel';
 import type { City } from '../../types/city';
 import type {
   ElevationComparison,
@@ -68,7 +69,7 @@ export function HintRow({ guess, hint, unit }: HintRowProps) {
       <div className={styles.header}>
         <span>
           <span className={styles.cityName}>{guess.name}</span>{' '}
-          <span className={styles.countryName}>{guess.country}</span>
+          <span className={styles.countryName}>{formatCityRegion(guess)}</span>
         </span>
         {hint.isCorrect && <span className={styles.correctBadge}>🎯 Correct!</span>}
       </div>

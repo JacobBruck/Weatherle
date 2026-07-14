@@ -2,7 +2,8 @@
   position: relative;
   min-height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Separates the weather-gradient background from the glass UI on top of it (see --page-overlay). */
@@ -16,11 +17,25 @@
   z-index: 0;
 }
 
-.topLeft {
-  position: fixed;
-  top: 16px;
-  left: 16px;
+/* Sticky header — stays pinned at the top while the page scrolls (a real part of the
+   UI, not a floating overlay), but because it's sticky rather than fixed, the browser
+   still reserves real space for it in normal flow, so it can never overlap the title/
+   content below regardless of how much it wraps on narrow screens. No background of
+   its own — same look as before (individual glass pill buttons floating over the
+   weather gradient), just pinned and no longer able to overlap anything. */
+.header {
+  position: sticky;
+  top: 0;
   z-index: 20;
+  width: 100%;
+  max-width: var(--max-width);
+  padding: 16px 16px 8px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .modeBadge {
@@ -39,20 +54,20 @@
   color: inherit;
   text-shadow: inherit;
   pointer-events: none;
+  flex-shrink: 0;
 }
 
-.topRight {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 20;
+.iconRow {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .schemeToggle {
   display: flex;
+  flex-shrink: 0;
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid var(--glass-border);
@@ -61,8 +76,13 @@
   box-shadow: var(--glass-shadow);
 }
 
+/* flex-shrink: 0 is load-bearing here — without it, a crowded iconRow on a narrow
+   viewport can compress this box below its fixed width while height stays put,
+   turning the circular button into an oval. */
 .iconButton {
+  position: relative;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 38px;
@@ -80,6 +100,19 @@
 
 .iconButton:hover {
   background: rgba(255, 255, 255, 0.22);
+}
+
+/* Small badge on the FAQ/account icon signaling you're signed in, without swapping
+   the ❓ glyph itself out for an avatar photo. */
+.signedInDot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--good);
+  border: 2px solid var(--modal-bg);
 }
 
 .refreshButton:active {
@@ -107,7 +140,7 @@
   z-index: 1;
   width: 100%;
   max-width: var(--max-width);
-  padding: 24px 16px 48px;
+  padding: 8px 16px 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -125,4 +158,28 @@
   color: var(--text-secondary);
   margin: 0 0 16px;
   font-size: 1rem;
+}
+
+/* Narrowest phones (older/small iPhones, budget Android) — shrink the header controls
+   so the mode badge + icon row comfortably fit without wrapping mid-word or crowding. */
+@media (max-width: 380px) {
+  .header {
+    gap: 6px;
+  }
+
+  .modeBadge {
+    padding: 7px 10px;
+    font-size: 0.76rem;
+  }
+
+  .iconButton {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+
+  .schemeButton {
+    padding: 6px 9px;
+    font-size: 0.85rem;
+  }
 }

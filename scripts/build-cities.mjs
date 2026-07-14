@@ -11,6 +11,21 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const raw = JSON.parse(readFileSync(join(__dirname, 'raw-cities.json'), 'utf-8'));
 
+// Full US state name (as it appears in raw-cities.json's "province" field) -> USPS abbreviation.
+// Kept in sync with src/data/usStates.ts.
+const US_STATE_ABBREVIATIONS = {
+  Alabama: 'AL', Alaska: 'AK', Arizona: 'AZ', Arkansas: 'AR', California: 'CA',
+  Colorado: 'CO', Connecticut: 'CT', Delaware: 'DE', Florida: 'FL', Georgia: 'GA',
+  Hawaii: 'HI', Idaho: 'ID', Illinois: 'IL', Indiana: 'IN', Iowa: 'IA',
+  Kansas: 'KS', Kentucky: 'KY', Louisiana: 'LA', Maine: 'ME', Maryland: 'MD',
+  Massachusetts: 'MA', Michigan: 'MI', Minnesota: 'MN', Mississippi: 'MS', Missouri: 'MO',
+  Montana: 'MT', Nebraska: 'NE', Nevada: 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+  'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', Ohio: 'OH',
+  Oklahoma: 'OK', Oregon: 'OR', Pennsylvania: 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', Tennessee: 'TN', Texas: 'TX', Utah: 'UT', Vermont: 'VT',
+  Virginia: 'VA', Washington: 'WA', 'West Virginia': 'WV', Wisconsin: 'WI', Wyoming: 'WY',
+};
+
 const COUNTRY_NAME_OVERRIDES = {
   'United States of America': 'United States',
   'Hong Kong S.A.R.': 'Hong Kong',
@@ -58,11 +73,19 @@ function slugify(name, countryCode) {
   return `${base}-${countryCode.toLowerCase()}`;
 }
 
+// Skip compound names like "Washington, D.C." — they already read fine as-is, and a
+// stateCode would double up on the existing comma ("Washington, D.C., DC, United States").
+function stateCodeFor(c) {
+  if (c.iso2 !== 'US' || c.city.includes(',')) return undefined;
+  return US_STATE_ABBREVIATIONS[c.province];
+}
+
 const cities = raw.map((c) => ({
   id: slugify(c.city, c.iso2),
   name: c.city,
   country: COUNTRY_NAME_OVERRIDES[c.country] ?? c.country,
   countryCode: c.iso2,
+  ...(stateCodeFor(c) ? { stateCode: stateCodeFor(c) } : {}),
   continent: continentFor(c.iso2, c.lng),
   latitude: Math.round(c.lat * 10000) / 10000,
   longitude: Math.round(c.lng * 10000) / 10000,

@@ -131,3 +131,12 @@
   font-size: 1.1rem;
   color: var(--text-secondary);
 }
+
+/* Narrowest phones — the High/Low + Humidity + Wind row sits right at the edge of
+   fitting at the default 28px gap; tighten it so a longer temperature string (e.g.
+   negative or 3-digit values) can't push the row into overflow. */
+@media (max-width: 380px) {
+  .statsRow {
+    gap: 14px;
+  }
+}

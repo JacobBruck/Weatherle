@@ -10,8 +10,9 @@ import { GUESS_CITIES } from './data/guessCities';
 import { useTemperatureUnit } from './hooks/useTemperatureUnit';
 import { useColorScheme } from './hooks/useColorScheme';
 import { useAuth } from './hooks/useAuth';
-import { AccountButton } from './components/AccountButton/AccountButton';
+import { FaqModal } from './components/FaqModal/FaqModal';
 import { getThemeClassName } from './utils/weatherCodes';
+import { formatCityLabel } from './utils/formatCityLabel';
 import { trackEvent } from './utils/analytics';
 import { recordResult } from './utils/stats';
 import { getNewlyUnlocked } from './utils/achievementTracking';
@@ -21,7 +22,7 @@ import { AchievementToast } from './components/AchievementToast/AchievementToast
 import { GuessInput } from './components/GuessInput/GuessInput';
 import { GuessHistory } from './components/GuessHistory/GuessHistory';
 import { GameStatus } from './components/GameStatus/GameStatus';
-import { ModeSelectModal } from './components/ModeSelectModal/ModeSelectModal';
+import { ModeSelectModal, type ModeModalStep } from './components/ModeSelectModal/ModeSelectModal';
 import { StatsModal } from './components/StatsModal/StatsModal';
 import { EasterEggModal } from './components/EasterEggModal/EasterEggModal';
 import { EASTER_EGG_CITY_IDS } from './data/easterEggs';
@@ -37,7 +38,19 @@ function App() {
   const [mode, setMode] = useGameMode();
   const [difficulty, setDifficulty] = useDifficulty();
   const [showModePrompt, setShowModePrompt] = useState(true);
+  const [modeModalStep, setModeModalStep] = useState<ModeModalStep>('welcome');
+  // A returning player already has a valid stored mode/difficulty (see useGameMode/useDifficulty
+  // defaults), so the prompt can be dismissed. A genuine first-ever visit has no stored mode yet —
+  // that player is guided through a deliberate first choice with no way to skip it.
+  const [canCloseModePrompt, setCanCloseModePrompt] = useState(() => {
+    try {
+      return localStorage.getItem('weatherle:mode') !== null;
+    } catch {
+      return false;
+    }
+  });
   const [showStats, setShowStats] = useState(false);
+  const [showFaq, setShowFaq] = useState(false);
   const [easterEgg, setEasterEgg] = useState<{ won: boolean; city: City; mode: GameMode } | null>(null);
   const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
 
@@ -70,7 +83,7 @@ function App() {
 
   const themeClass = data ? getThemeClassName(data.current.weather_code, data.current.is_day) : 'theme-clear-day';
   const isOver = gameStatus !== 'in-progress';
-  const revealedCityLabel = isOver ? `${activeCity.name}, ${activeCity.country}` : null;
+  const revealedCityLabel = isOver ? formatCityLabel(activeCity) : null;
 
   // Records stats and surfaces achievements / easter eggs / the stats modal when a round ends.
   function handleDailyGameEnd(status: 'won' | 'lost', entries: GuessEntry[], city: City) {
@@ -93,16 +106,30 @@ function App() {
     }
   }
 
+  // Reopens the setup modal mid-game, skipping straight to mode selection — returning
+  // players already know the rules, so there's no need to walk them through welcome/rules again.
+  function openModeSettings() {
+    setModeModalStep('mode');
+    setShowModePrompt(true);
+  }
+
   function completeSetup(nextMode: GameMode, nextDifficulty: Difficulty) {
     setMode(nextMode);
     setDifficulty(nextDifficulty);
     setShowModePrompt(false);
+    setCanCloseModePrompt(true);
     trackEvent('game_start', { mode: nextMode, difficulty: nextDifficulty });
   }
 
   return (
     <div className={`${styles.page} ${themeClass} bg-transition`}>
-      {showModePrompt && <ModeSelectModal onComplete={completeSetup} />}
+      {showModePrompt && (
+        <ModeSelectModal
+          onComplete={completeSetup}
+          onClose={canCloseModePrompt ? () => setShowModePrompt(false) : undefined}
+          initialStep={modeModalStep}
+        />
+      )}
       {showStats && (
         <StatsModal mode={mode} difficulty={difficulty} dateString={daily.dateString} onClose={() => setShowStats(false)} />
       )}
@@ -124,64 +151,76 @@ function App() {
           }}
         />
       )}
+      {showFaq && (
+        <FaqModal user={user} onSignIn={signInWithGoogle} onSignOut={signOut} onClose={() => setShowFaq(false)} />
+      )}
 
-      <div className={styles.topLeft}>
+      <div className={styles.header}>
         <span className={styles.modeBadge}>
           {isDaily ? '📅 Daily Challenge' : '♾️ Unlimited'}
         </span>
-      </div>
 
-      <div className={styles.topRight}>
-        <button
-          type="button"
-          className={styles.iconButton}
-          aria-label="View statistics"
-          title="View statistics"
-          onClick={() => setShowStats(true)}
-        >
-          📊
-        </button>
-        <button
-          type="button"
-          className={styles.iconButton}
-          aria-label="Game settings — switch mode or city pool"
-          title="Game settings — switch mode or city pool"
-          onClick={() => setShowModePrompt(true)}
-        >
-          ⚙️
-        </button>
-        {!isDaily && (
+        <div className={styles.iconRow}>
           <button
             type="button"
-            className={`${styles.iconButton} ${styles.refreshButton}`}
-            aria-label="New random city"
-            title="New random city"
-            onClick={unlimited.newRound}
+            className={styles.iconButton}
+            aria-label="View statistics"
+            title="View statistics"
+            onClick={() => setShowStats(true)}
           >
-            🔄
-          </button>
-        )}
-        <div className={styles.schemeToggle} role="group" aria-label="Appearance">
-          <button
-            type="button"
-            className={scheme === 'light' ? `${styles.schemeButton} ${styles.schemeButtonActive}` : styles.schemeButton}
-            aria-pressed={scheme === 'light'}
-            aria-label="Light mode"
-            onClick={() => setScheme('light')}
-          >
-            ☀️
+            📊
           </button>
           <button
             type="button"
-            className={scheme === 'dark' ? `${styles.schemeButton} ${styles.schemeButtonActive}` : styles.schemeButton}
-            aria-pressed={scheme === 'dark'}
-            aria-label="Dark mode"
-            onClick={() => setScheme('dark')}
+            className={styles.iconButton}
+            aria-label="Game settings — switch mode or city pool"
+            title="Game settings — switch mode or city pool"
+            onClick={openModeSettings}
           >
-            🌙
+            ⚙️
+          </button>
+          {!isDaily && (
+            <button
+              type="button"
+              className={`${styles.iconButton} ${styles.refreshButton}`}
+              aria-label="New random city"
+              title="New random city"
+              onClick={unlimited.newRound}
+            >
+              🔄
+            </button>
+          )}
+          <div className={styles.schemeToggle} role="group" aria-label="Appearance">
+            <button
+              type="button"
+              className={scheme === 'light' ? `${styles.schemeButton} ${styles.schemeButtonActive}` : styles.schemeButton}
+              aria-pressed={scheme === 'light'}
+              aria-label="Light mode"
+              onClick={() => setScheme('light')}
+            >
+              ☀️
+            </button>
+            <button
+              type="button"
+              className={scheme === 'dark' ? `${styles.schemeButton} ${styles.schemeButtonActive}` : styles.schemeButton}
+              aria-pressed={scheme === 'dark'}
+              aria-label="Dark mode"
+              onClick={() => setScheme('dark')}
+            >
+              🌙
+            </button>
+          </div>
+          <button
+            type="button"
+            className={styles.iconButton}
+            aria-label={user ? `Account, rules & FAQ — signed in as ${user.email ?? 'your account'}` : 'About Weatherle, rules & sign in'}
+            title={user ? (user.email ?? 'Account') : 'About Weatherle, rules & sign in'}
+            onClick={() => setShowFaq(true)}
+          >
+            ❓
+            {user && <span className={styles.signedInDot} aria-hidden="true" />}
           </button>
         </div>
-        <AccountButton user={user} onSignIn={signInWithGoogle} onSignOut={signOut} />
       </div>
 
       <main className={styles.container}>
@@ -209,7 +248,7 @@ function App() {
           dateString={isDaily ? daily.dateString : weatherCacheKey}
           entries={entries}
           onPlayAgain={unlimited.newRound}
-          onSwitchMode={() => setShowModePrompt(true)}
+          onSwitchMode={openModeSettings}
         />
 
         <GuessInput

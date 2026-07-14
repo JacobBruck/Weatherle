@@ -1,0 +1,86 @@
+.howToPlay {
+  padding: 14px 16px;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.06);
+  text-align: left;
+}
+
+.howToPlayText {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.hintLegend {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hintMatch {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(52, 199, 89, 0.25);
+  border: 1px solid rgba(52, 199, 89, 0.45);
+  color: var(--good);
+}
+
+.hintMiss {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 69, 58, 0.18);
+  border: 1px solid rgba(255, 69, 58, 0.35);
+  color: #ff6b63;
+}
+
+.hintsList {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 12px;
+  row-gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.hintIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hintIconEmoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.hintIconLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.hintDesc {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 420px) {
+  .howToPlay {
+    padding: 12px 14px;
+  }
+
+  .howToPlayText {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+}

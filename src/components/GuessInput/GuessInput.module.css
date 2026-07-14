@@ -13,6 +13,12 @@
   border: 1px solid var(--glass-border);
   border-radius: var(--card-radius);
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16);
 }
 
 .input::placeholder {
@@ -40,6 +46,10 @@
   right: 0;
   z-index: 50;
   max-height: 45vh;
+  /* dvh accounts for mobile browser chrome/keyboard shrinking the visible area, unlike
+     static vh — kept as a second declaration so browsers without dvh support just keep
+     the vh fallback above. */
+  max-height: 45dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-behavior: smooth;
@@ -51,9 +61,11 @@
 }
 
 .option {
+  min-height: 44px;
   padding: 10px 12px;
   border-radius: 12px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
   cursor: pointer;

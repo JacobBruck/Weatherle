@@ -259,7 +259,7 @@
 .achievementCheck {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #34c759;
+  color: var(--good);
   flex-shrink: 0;
 }
 

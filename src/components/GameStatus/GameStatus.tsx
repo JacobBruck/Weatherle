@@ -7,6 +7,7 @@ import { MAX_GUESSES, type GuessEntry } from '../../hooks/useGameState';
 import { useNextCityCountdown } from '../../hooks/useNextCityCountdown';
 import { useDailyAverage } from '../../hooks/useDailyAverage';
 import { buildShareText } from '../../utils/share';
+import { formatCityLabel } from '../../utils/formatCityLabel';
 import type { DailyAverage } from '../../utils/stats';
 import styles from './GameStatus.module.css';
 
@@ -140,7 +141,7 @@ export function GameStatus({ status, guessCount, targetCity, mode, difficulty, d
 
   return (
     <section className={`glass ${styles.banner} ${styles.bannerLost}`} role="status">
-      😔 Out of guesses — it was {targetCity.name}, {targetCity.country}.
+      😔 Out of guesses — it was {formatCityLabel(targetCity)}.
       {mode === 'daily' && <DailyAverageNote average={dailyAverage} />}
       <ShareButton entries={entries} mode={mode} difficulty={difficulty} status={status} dateString={dateString} />
       <Actions mode={mode} onPlayAgain={onPlayAgain} onSwitchMode={onSwitchMode} />
