@@ -54,16 +54,17 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, reve
         </button>
       </div>
 
+      {status === 'success' && data && (
+        <span
+          className={styles.dayNightBadge}
+          role="img"
+          aria-label={data.current.is_day ? 'Daytime right now in this city' : 'Nighttime right now in this city'}
+        >
+          {data.current.is_day ? '☀️' : '🌙'}
+        </span>
+      )}
+
       <p className={revealedCityLabel ? `${styles.cityName} ${styles.cityNameRevealed}` : styles.cityName}>
-        {status === 'success' && data && (
-          <span
-            className={styles.dayNightBadge}
-            role="img"
-            aria-label={data.current.is_day ? 'Daytime right now in this city' : 'Nighttime right now in this city'}
-          >
-            {data.current.is_day ? '☀️' : '🌙'}
-          </span>
-        )}
         {revealedCityLabel ?? "Today's weather — where in the world is this?"}
       </p>
 
@@ -99,6 +100,8 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, reve
               <span className={styles.statLabel}>Wind</span>
               <span className={styles.statValue}>{formatWindSpeed(data.current.wind_speed_10m, unit)}</span>
             </div>
+          </div>
+          <div className={styles.statsRow}>
             <div className={styles.stat}>
               <span className={styles.statLabel}>Sunrise</span>
               <span className={styles.statValue}>{formatTime(data.daily.sunrise[0])}</span>

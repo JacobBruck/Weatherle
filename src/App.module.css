@@ -163,6 +163,19 @@
   font-size: 0.95rem;
 }
 
+/* Phones — the mode badge and icon row no longer split to opposite edges (which reads
+   as two disconnected groups once the header wraps to its own line); both cluster
+   together at the right instead. */
+@media (max-width: 420px) {
+  .header {
+    justify-content: flex-end;
+  }
+
+  .iconRow {
+    margin-left: 0;
+  }
+}
+
 /* Narrowest phones (older/small iPhones, budget Android) — shrink the header controls
    so the mode badge + icon row comfortably fit without wrapping mid-word or crowding. */
 @media (max-width: 380px) {
