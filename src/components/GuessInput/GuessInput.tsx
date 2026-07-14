@@ -41,6 +41,10 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
   // On iOS the keyboard overlays the layout viewport without resizing it.
   // visualViewport tracks the visible area — scroll the input to sit just
   // above the keyboard so the absolute-positioned dropdown has room above it.
+  // Only listens for 'resize' (the keyboard opening/closing) — also listening
+  // for 'scroll' created a feedback loop, since our own scrollBy call is
+  // itself a visualViewport scroll, which re-ran this and scrolled again,
+  // reading as the page endlessly drifting/jittering.
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
@@ -50,15 +54,11 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
         const rect = inputRef.current.getBoundingClientRect();
         const targetBottom = window.innerHeight - keyboardHeight - 16;
         const delta = rect.bottom - targetBottom;
-        if (delta > 0) window.scrollBy({ top: delta, behavior: 'smooth' });
+        if (delta > 1) window.scrollBy({ top: delta });
       }
     };
     vv.addEventListener('resize', update);
-    vv.addEventListener('scroll', update);
-    return () => {
-      vv.removeEventListener('resize', update);
-      vv.removeEventListener('scroll', update);
-    };
+    return () => vv.removeEventListener('resize', update);
   }, []);
 
   // Keep the highlighted suggestion visible when navigating a scrollable list with the keyboard.
