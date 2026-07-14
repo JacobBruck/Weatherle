@@ -169,10 +169,15 @@
 @media (max-width: 420px) {
   .header {
     justify-content: flex-end;
+    padding-bottom: 2px;
   }
 
   .iconRow {
     margin-left: 0;
+  }
+
+  .container {
+    padding-top: 2px;
   }
 
   .title {
