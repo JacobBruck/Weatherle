@@ -51,3 +51,9 @@ export const US_STATE_ABBREVIATIONS: Record<string, string> = {
   Wisconsin: 'WI',
   Wyoming: 'WY',
 };
+
+/** USPS abbreviation -> full state name, e.g. "TX" -> "Texas" — the reverse of
+ * US_STATE_ABBREVIATIONS, used to match a typed state name against a city's stateCode. */
+export const US_STATE_NAMES: Record<string, string> = Object.fromEntries(
+  Object.entries(US_STATE_ABBREVIATIONS).map(([name, code]) => [code, name]),
+);

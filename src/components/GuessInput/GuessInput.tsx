@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import type { City } from '../../types/city';
 import { formatCityRegion } from '../../utils/formatCityLabel';
+import { US_STATE_NAMES } from '../../data/usStates';
 import styles from './GuessInput.module.css';
 
 interface GuessInputProps {
@@ -33,11 +34,14 @@ function matchesQuery(city: City, query: string): boolean {
   const q = normalize(query.trim());
   if (!q) return false;
   const country = normalize(city.country);
+  const stateName = city.stateCode ? US_STATE_NAMES[city.stateCode] : undefined;
   return (
     normalize(city.name).startsWith(q) ||
     country.startsWith(q) ||
     normalize(city.name).includes(q) ||
-    COUNTRY_ALIASES[q] === country
+    COUNTRY_ALIASES[q] === country ||
+    (!!city.stateCode && normalize(city.stateCode).startsWith(q)) ||
+    (!!stateName && normalize(stateName).startsWith(q))
   );
 }
 
