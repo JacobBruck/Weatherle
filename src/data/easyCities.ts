@@ -1,5 +1,6 @@
 import { CITIES } from './cities';
 import type { City } from '../types/city';
+import { seededShuffle } from '../utils/shuffle';
 
 /**
  * The ~60 cities virtually anyone in the world recognises by name —
@@ -35,4 +36,9 @@ const EASY_CITY_IDS = new Set([
   'moscow-ru', 'havana-cu',
 ]);
 
-export const EASY_CITIES: City[] = CITIES.filter((city) => EASY_CITY_IDS.has(city.id));
+// See MEDIUM_CITIES in mediumCities.ts for why this is shuffled rather than filtered directly.
+export const EASY_CITIES: City[] = seededShuffle(
+  CITIES.filter((city) => EASY_CITY_IDS.has(city.id)),
+  (city) => city.id,
+  'easy-daily-v1',
+);

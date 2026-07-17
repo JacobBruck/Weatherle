@@ -1,5 +1,6 @@
 import { CITIES } from './cities';
 import type { City } from '../types/city';
+import { seededShuffle } from '../utils/shuffle';
 
 /**
  * The ~150 cities a casual player worldwide is most likely to recognize by name —
@@ -53,4 +54,12 @@ const MEDIUM_CITY_IDS = new Set([
   'alexandria-eg', 'tripoli-ly', 'kampala-ug', 'pretoria-za', 'abuja-ng',
 ]);
 
-export const MEDIUM_CITIES: City[] = CITIES.filter((city) => MEDIUM_CITY_IDS.has(city.id));
+// CITIES is entered region-by-region, so filtering it directly would walk the daily
+// rotation through several similar cities on consecutive days (e.g. Liverpool, Reykjavik,
+// Split, Doha, Abu Dhabi, Dubai all sit back-to-back in CITIES). Shuffle once, with a fixed
+// seed, so every player still gets the same sequence, just not clustered by region.
+export const MEDIUM_CITIES: City[] = seededShuffle(
+  CITIES.filter((city) => MEDIUM_CITY_IDS.has(city.id)),
+  (city) => city.id,
+  'medium-daily-v1',
+);

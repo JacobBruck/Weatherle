@@ -3,9 +3,11 @@ import { CITIES } from '../data/cities';
 import { EASY_CITIES } from '../data/easyCities';
 import { MEDIUM_CITIES } from '../data/mediumCities';
 import { GUESS_CITIES } from '../data/guessCities';
+import { seededShuffle } from '../utils/shuffle';
 import type { City } from '../types/city';
 
-const HARD_CITIES: City[] = [...CITIES, ...GUESS_CITIES];
+// See MEDIUM_CITIES in mediumCities.ts for why this is shuffled rather than concatenated directly.
+const HARD_CITIES: City[] = seededShuffle([...CITIES, ...GUESS_CITIES], (city) => city.id, 'hard-daily-v1');
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
