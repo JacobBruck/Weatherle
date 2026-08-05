@@ -60,6 +60,17 @@
   animation: dropdownIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Laptop and up (same breakpoint as App.module.css) — open downward instead, so the
+   weather card above stays visible while typing. The upward anchor exists to dodge the
+   iOS on-screen keyboard eating the bottom of the viewport, which isn't a concern here. */
+@media (min-width: 700px) {
+  .dropdown {
+    bottom: auto;
+    top: calc(100% + 8px);
+    animation: dropdownInDown 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
 .option {
   min-height: 44px;
   padding: 10px 12px;
@@ -86,6 +97,17 @@
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropdownInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
