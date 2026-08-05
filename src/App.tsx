@@ -157,7 +157,7 @@ function App() {
         <FaqModal user={user} onSignIn={signInWithGoogle} onSignOut={signOut} onClose={() => setShowFaq(false)} />
       )}
 
-      <div className={`${styles.header} app-header`}>
+      <div className={styles.header}>
         <span className={styles.modeBadge}>
           {isDaily ? '📅 Daily Challenge' : '♾️ Unlimited'}
         </span>
