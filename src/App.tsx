@@ -89,9 +89,7 @@ function App() {
   function handleDailyGameEnd(status: 'won' | 'lost', entries: GuessEntry[], city: City) {
     recordResult('daily', difficulty, status === 'won', entries.length, daily.dateString, city, entries);
     const newly = getNewlyUnlocked('daily', difficulty);
-    // Delayed so the win/loss banner registers before any achievement toast (and its
-    // confetti) appears — otherwise a loss can read as a celebration.
-    if (newly.length > 0) setTimeout(() => setAchievementQueue((q) => [...q, ...newly]), 1200);
+    if (newly.length > 0) setAchievementQueue((q) => [...q, ...newly]);
     if (EASTER_EGG_CITY_IDS.has(city.id)) {
       setEasterEgg({ won: status === 'won', city, mode: 'daily' });
     } else {
@@ -102,7 +100,7 @@ function App() {
   function handleUnlimitedGameEnd(status: 'won' | 'lost', entries: GuessEntry[], city: City) {
     recordResult('unlimited', difficulty, status === 'won', entries.length, daily.dateString, city, entries);
     const newly = getNewlyUnlocked('unlimited', difficulty);
-    if (newly.length > 0) setTimeout(() => setAchievementQueue((q) => [...q, ...newly]), 1200);
+    if (newly.length > 0) setAchievementQueue((q) => [...q, ...newly]);
     if (EASTER_EGG_CITY_IDS.has(city.id)) {
       setEasterEgg({ won: status === 'won', city, mode: 'unlimited' });
     }
@@ -157,7 +155,7 @@ function App() {
         <FaqModal user={user} onSignIn={signInWithGoogle} onSignOut={signOut} onClose={() => setShowFaq(false)} />
       )}
 
-      <div className={`${styles.header} app-header`}>
+      <div className={styles.header}>
         <span className={styles.modeBadge}>
           {isDaily ? '📅 Daily Challenge' : '♾️ Unlimited'}
         </span>

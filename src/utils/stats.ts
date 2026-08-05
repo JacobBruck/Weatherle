@@ -175,21 +175,21 @@ async function syncResultToSupabase(
   const userId = data.session?.user.id;
 
   if (!userId) {
-    const rpcName = mode === 'daily' ? 'record_anon_daily_result' : 'record_anon_unlimited_result';
-    const { error } = await supabase.rpc(rpcName, {
-      p_date_string: dateString,
-      p_difficulty: difficulty,
-      p_won: won,
-      p_guess_count: guessCount,
-      p_client_id: getClientId(),
-    });
-    if (error) console.error(`Failed to sync anonymous result via ${rpcName}`, error);
+    if (mode === 'daily') {
+      await supabase.rpc('record_anon_daily_result', {
+        p_date_string: dateString,
+        p_difficulty: difficulty,
+        p_won: won,
+        p_guess_count: guessCount,
+        p_client_id: getClientId(),
+      });
+    }
     return;
   }
 
   const distanceThisRound = entries.reduce((sum, e) => sum + e.hint.distanceKm, 0);
 
-  const [gameResultOutcome, statsSummaryOutcome] = await Promise.all([
+  await Promise.all([
     supabase.from('game_results').insert({
       user_id: userId,
       mode,
@@ -202,8 +202,6 @@ async function syncResultToSupabase(
     }),
     supabase.from('stats_summary').upsert(toStatsSummaryRow(userId, mode, difficulty, ds)),
   ]);
-  if (gameResultOutcome.error) console.error('Failed to sync game result to Supabase', gameResultOutcome.error);
-  if (statsSummaryOutcome.error) console.error('Failed to sync stats summary to Supabase', statsSummaryOutcome.error);
 }
 
 /**
@@ -226,70 +224,6 @@ export async function migrateLocalStatsToSupabase(userId: string): Promise<void>
     }
   }
   if (rows.length > 0) await supabase.from('stats_summary').upsert(rows);
-}
-
-/** Maps a stats_summary row back onto the local DifficultyStats shape. */
-function fromStatsSummaryRow(row: {
-  games_played: number;
-  wins: number;
-  current_streak: number;
-  best_streak: number;
-  best_guesses: number | null;
-  guess_distribution: number[];
-  last_played_date: string | null;
-  continents_won: string[];
-  countries_won: string[];
-  vibes_won: string[];
-  won_high_elevation: boolean;
-  won_low_elevation: boolean;
-  won_megacity: boolean;
-  won_small_town: boolean;
-  cumulative_distance_km: number;
-}): DifficultyStats {
-  return {
-    gamesPlayed: row.games_played,
-    wins: row.wins,
-    currentStreak: row.current_streak,
-    bestStreak: row.best_streak,
-    bestGuesses: row.best_guesses,
-    guessDistribution: row.guess_distribution,
-    lastPlayedDate: row.last_played_date,
-    continentsWon: row.continents_won,
-    countriesWon: row.countries_won,
-    vibesWon: row.vibes_won,
-    wonHighElevation: row.won_high_elevation,
-    wonLowElevation: row.won_low_elevation,
-    wonMegacity: row.won_megacity,
-    wonSmallTown: row.won_small_town,
-    cumulativeDistanceKm: row.cumulative_distance_km,
-  };
-}
-
-/**
- * Pulls a signed-in user's Supabase stats back down into localStorage. Sync to Supabase
- * is otherwise write-only, so without this a signed-in user opening the game on a new
- * device/browser (or after clearing site data) sees their stats reset to zero even
- * though their history exists remotely. Only adopts a remote (mode, difficulty) record
- * when it's strictly ahead of the local one (by games played), so a fresh local session
- * can never clobber progress made moments ago on this same device before the fetch
- * resolved.
- */
-export async function hydrateStatsFromSupabase(userId: string): Promise<void> {
-  if (!supabase) return;
-
-  const { data, error } = await supabase.from('stats_summary').select('*').eq('user_id', userId);
-  if (error || !data) return;
-
-  const all = loadAll();
-  let changed = false;
-  for (const row of data as Array<{ mode: GameMode; difficulty: Difficulty } & Parameters<typeof fromStatsSummaryRow>[0]>) {
-    const local = all[row.mode][row.difficulty];
-    if (!local || row.games_played > local.gamesPlayed) {
-      all[row.mode][row.difficulty] = fromStatsSummaryRow(row);
-      changed = true;
-    }
-  }
-  if (changed) saveAll(all);
 }
 
 export interface DailyAverage {

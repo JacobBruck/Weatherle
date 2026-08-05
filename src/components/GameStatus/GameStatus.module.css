@@ -18,17 +18,7 @@
 }
 
 .bannerLost {
-  color: var(--bad);
-  animation: bannerLostIn 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-}
-
-@keyframes bannerLostIn {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(5px); }
-  60% { transform: translateX(-3px); }
-  80% { transform: translateX(2px); }
-  100% { transform: translateX(0); }
+  color: var(--text-primary);
 }
 
 .bannerSub {

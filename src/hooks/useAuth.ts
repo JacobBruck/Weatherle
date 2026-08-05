@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabaseClient';
-import { hydrateStatsFromSupabase, migrateLocalStatsToSupabase } from '../utils/stats';
+import { migrateLocalStatsToSupabase } from '../utils/stats';
 
 interface AuthState {
   user: User | null;
@@ -9,17 +9,6 @@ interface AuthState {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-}
-
-/**
- * Pulls remote stats down first (in case this device/browser is behind), then pushes
- * local stats up only for (mode, difficulty) pairs Supabase has never seen — order
- * matters so a brand-new signed-in user's local progress isn't shadowed by an empty
- * remote read happening after the push.
- */
-async function syncStatsWithSupabase(userId: string): Promise<void> {
-  await hydrateStatsFromSupabase(userId);
-  await migrateLocalStatsToSupabase(userId);
 }
 
 /**
@@ -37,12 +26,12 @@ export function useAuth(): AuthState {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
       setLoading(false);
-      if (data.session?.user) void syncStatsWithSupabase(data.session.user.id);
+      if (data.session?.user) void migrateLocalStatsToSupabase(data.session.user.id);
     });
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) void syncStatsWithSupabase(session.user.id);
+      if (session?.user) void migrateLocalStatsToSupabase(session.user.id);
     });
 
     return () => subscription.subscription.unsubscribe();

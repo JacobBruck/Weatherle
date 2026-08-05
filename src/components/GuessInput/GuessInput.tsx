@@ -158,7 +158,7 @@ export function GuessInput({ cities, onSubmitGuess, disabled, guessedCityIds, pl
       />
       {open && query.trim() && (
         <>
-          <div className={`${styles.backdrop} guess-dropdown-open`} aria-hidden="true" onMouseDown={(e) => e.preventDefault()} />
+          <div className={styles.backdrop} aria-hidden="true" onMouseDown={(e) => e.preventDefault()} />
           <ul
             ref={listboxRef}
             className={styles.dropdown + ' glass'}

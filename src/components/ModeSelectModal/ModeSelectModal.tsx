@@ -135,7 +135,6 @@ export function ModeSelectModal({ onComplete, onClose, initialStep = 'welcome' }
                 <span className={styles.difficultyHint}>~500 cities worldwide</span>
               </button>
             </div>
-            <p className={styles.howToPlayText}>Each larger pool adds more cities on top of the smaller one — nothing is removed.</p>
           </>
         )}
       </div>
