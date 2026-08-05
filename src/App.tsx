@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useDailyCity } from './hooks/useDailyCity';
 import { useWeather } from './hooks/useWeather';
 import { useGameState, type GuessEntry } from './hooks/useGameState';
@@ -53,6 +53,28 @@ function App() {
   const [showFaq, setShowFaq] = useState(false);
   const [easterEgg, setEasterEgg] = useState<{ won: boolean; city: City; mode: GameMode } | null>(null);
   const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
+  const pendingAchievementTimeouts = useRef<number[]>([]);
+
+  // Delays showing newly-unlocked achievements so the win/loss banner registers first
+  // (see handleDailyGameEnd/handleUnlimitedGameEnd). Tracked so a still-pending or
+  // already-queued toast from a finished round can be dropped if the player starts a
+  // new Unlimited round before it appears — otherwise it can pop up later, misleadingly
+  // overlapping an unrelated (possibly losing) round's result screen.
+  function queueAchievements(newly: Achievement[]) {
+    const id = window.setTimeout(() => setAchievementQueue((q) => [...q, ...newly]), 1200);
+    pendingAchievementTimeouts.current.push(id);
+  }
+
+  function clearPendingAchievements() {
+    for (const id of pendingAchievementTimeouts.current) window.clearTimeout(id);
+    pendingAchievementTimeouts.current = [];
+    setAchievementQueue([]);
+  }
+
+  function startNewUnlimitedRound() {
+    clearPendingAchievements();
+    unlimited.newRound();
+  }
 
   const pool = useMemo(() => citiesForDifficulty(difficulty), [difficulty]);
 
@@ -89,9 +111,7 @@ function App() {
   function handleDailyGameEnd(status: 'won' | 'lost', entries: GuessEntry[], city: City) {
     recordResult('daily', difficulty, status === 'won', entries.length, daily.dateString, city, entries);
     const newly = getNewlyUnlocked('daily', difficulty);
-    // Delayed so the win/loss banner registers before any achievement toast (and its
-    // confetti) appears — otherwise a loss can read as a celebration.
-    if (newly.length > 0) setTimeout(() => setAchievementQueue((q) => [...q, ...newly]), 1200);
+    if (newly.length > 0) queueAchievements(newly);
     if (EASTER_EGG_CITY_IDS.has(city.id)) {
       setEasterEgg({ won: status === 'won', city, mode: 'daily' });
     } else {
@@ -102,7 +122,7 @@ function App() {
   function handleUnlimitedGameEnd(status: 'won' | 'lost', entries: GuessEntry[], city: City) {
     recordResult('unlimited', difficulty, status === 'won', entries.length, daily.dateString, city, entries);
     const newly = getNewlyUnlocked('unlimited', difficulty);
-    if (newly.length > 0) setTimeout(() => setAchievementQueue((q) => [...q, ...newly]), 1200);
+    if (newly.length > 0) queueAchievements(newly);
     if (EASTER_EGG_CITY_IDS.has(city.id)) {
       setEasterEgg({ won: status === 'won', city, mode: 'unlimited' });
     }
@@ -187,7 +207,7 @@ function App() {
               className={`${styles.iconButton} ${styles.refreshButton}`}
               aria-label="New random city"
               title="New random city"
-              onClick={unlimited.newRound}
+              onClick={startNewUnlimitedRound}
             >
               🔄
             </button>
@@ -249,7 +269,7 @@ function App() {
           difficulty={difficulty}
           dateString={isDaily ? daily.dateString : weatherCacheKey}
           entries={entries}
-          onPlayAgain={unlimited.newRound}
+          onPlayAgain={startNewUnlimitedRound}
           onSwitchMode={openModeSettings}
         />
 

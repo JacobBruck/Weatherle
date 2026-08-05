@@ -56,6 +56,16 @@ export function getNewlyUnlocked(mode: GameMode, difficulty: Difficulty): Achiev
   const newly = achievements.filter((a) => a.unlocked && !seen.has(a.id));
   if (newly.length > 0) {
     map[mode][difficulty] = achievements.filter((a) => a.unlocked).map((a) => a.id);
+    // Triple Threat's unlock condition spans all three difficulties (win at least one
+    // game on each), so it can go true from a win on a *different* difficulty than the
+    // one just played here. Mark it seen in every difficulty bucket right away —
+    // otherwise it resurfaces the next time each other difficulty's next round
+    // completes, whether that round is a win or a loss.
+    if (newly.some((a) => a.id === 'triple-threat')) {
+      for (const d of DIFFICULTIES) {
+        if (!map[mode][d].includes('triple-threat')) map[mode][d] = [...map[mode][d], 'triple-threat'];
+      }
+    }
     saveSeen(map);
   }
   return newly;
