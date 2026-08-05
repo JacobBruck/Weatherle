@@ -205,3 +205,97 @@ from (
 group by date_string, difficulty;
 
 grant select on daily_aggregate_stats to anon, authenticated;
+
+-- 6. Anonymous unlimited-mode contributions ---------------------------------
+-- Mirrors daily_anon_results, but for Unlimited mode. Unlike the daily table,
+-- there is no per-(date, client) uniqueness constraint here — a single
+-- browser can (and is expected to) play many Unlimited rounds in one day, and
+-- each one should count.
+create table if not exists unlimited_anon_results (
+  id          bigint generated always as identity primary key,
+  date_string text not null,
+  difficulty  text not null check (difficulty in ('easy', 'medium', 'hard')),
+  won         boolean not null,
+  guess_count int not null check (guess_count between 1 and 8),
+  client_id   uuid not null,
+  created_at  timestamptz not null default now()
+);
+
+-- No direct insert/select granted to clients — all writes go through the
+-- validated security-definer function below, same pattern as record_anon_daily_result.
+alter table unlimited_anon_results enable row level security;
+
+create or replace function record_anon_unlimited_result(
+  p_date_string text,
+  p_difficulty  text,
+  p_won         boolean,
+  p_guess_count int,
+  p_client_id   uuid
+) returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_date_string::date < current_date - 1 or p_date_string::date > current_date then
+    raise exception 'invalid date_string';
+  end if;
+  if p_difficulty not in ('easy', 'medium', 'hard') then
+    raise exception 'invalid difficulty';
+  end if;
+  if p_guess_count < 1 or p_guess_count > 8 then
+    raise exception 'invalid guess_count';
+  end if;
+
+  insert into unlimited_anon_results (date_string, difficulty, won, guess_count, client_id)
+  values (p_date_string, p_difficulty, p_won, p_guess_count, p_client_id);
+end;
+$$;
+
+grant execute on function record_anon_unlimited_result(text, text, boolean, int, uuid) to anon, authenticated;
+
+-- 7. Weekly plays-per-mode summary -------------------------------------------
+-- Feeds the weekly analytics email. Combines signed-in results (game_results,
+-- both modes) with both anonymous tables into total rounds played per
+-- (date, mode, difficulty). Unlike daily_aggregate_stats (players = distinct
+-- participants for a single daily puzzle), this counts total rounds, since
+-- Unlimited has no per-day uniqueness. Unlimited game_results rows have no
+-- date_string, so they're bucketed by created_at converted to Eastern date.
+create or replace view weekly_mode_play_counts as
+select
+  date_string,
+  mode,
+  difficulty,
+  sum(plays)::bigint as plays
+from (
+  select date_string, 'daily' as mode, difficulty, count(*) as plays
+  from game_results
+  where mode = 'daily' and date_string is not null
+  group by date_string, difficulty
+
+  union all
+
+  select
+    to_char(created_at at time zone 'America/New_York', 'YYYY-MM-DD') as date_string,
+    'unlimited' as mode,
+    difficulty,
+    count(*) as plays
+  from game_results
+  where mode = 'unlimited'
+  group by 1, difficulty
+
+  union all
+
+  select date_string, 'daily' as mode, difficulty, count(*) as plays
+  from daily_anon_results
+  group by date_string, difficulty
+
+  union all
+
+  select date_string, 'unlimited' as mode, difficulty, count(*) as plays
+  from unlimited_anon_results
+  group by date_string, difficulty
+) combined
+group by date_string, mode, difficulty;
+
+grant select on weekly_mode_play_counts to anon, authenticated;

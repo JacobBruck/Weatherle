@@ -105,3 +105,12 @@ a {
 .bg-transition {
   transition: background 0.6s ease;
 }
+
+/* The guess dropdown opens upward and can visually overlap the sticky header on short
+   mobile viewports. The header still paints on top there (unchanged), but while the
+   dropdown is open it should behave like the rest of the page already does under the
+   dropdown's backdrop — inert — so a tap in the overlapping area reaches the dropdown
+   option underneath instead of being swallowed by a header button. */
+body:has(.guess-dropdown-open) .app-header {
+  pointer-events: none;
+}
