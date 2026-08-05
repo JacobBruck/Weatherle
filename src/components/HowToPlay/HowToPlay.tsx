@@ -19,8 +19,7 @@ export function HowToPlay() {
       <p className={styles.howToPlayText}>
         Guess the hidden city every day based on a live weather report. Using the clues, your goal is to
         guess the city using as few guesses as possible. Tip: type a country (or U.S. state) in the
-        guess box to narrow the list to cities in that country. Each larger difficulty pool adds more
-        cities on top of the smaller one — nothing is removed.
+        guess box to narrow the list to cities in that country.
       </p>
       <div className={styles.hintLegend}>
         <span className={styles.hintMatch}>✓ Match</span>
