@@ -351,7 +351,7 @@ export const CITIES: City[] = [
   },
   {
     id: "belem-br",
-    name: "Belem",
+    name: "Belém",
     country: "Brazil",
     countryCode: "BR",
     continent: "South America",
@@ -428,7 +428,7 @@ export const CITIES: City[] = [
   },
   {
     id: "bogota-co",
-    name: "Bogota",
+    name: "Bogotá",
     country: "Colombia",
     countryCode: "CO",
     continent: "South America",
@@ -451,7 +451,7 @@ export const CITIES: City[] = [
   },
   {
     id: "brasilia-br",
-    name: "Brasilia",
+    name: "Brasília",
     country: "Brazil",
     countryCode: "BR",
     continent: "South America",
@@ -1104,7 +1104,7 @@ export const CITIES: City[] = [
   },
   {
     id: "goiania-br",
-    name: "Goiania",
+    name: "Goiânia",
     country: "Brazil",
     countryCode: "BR",
     continent: "South America",
@@ -1258,7 +1258,7 @@ export const CITIES: City[] = [
   },
   {
     id: "haora-in",
-    name: "Haora",
+    name: "Howrah",
     country: "India",
     countryCode: "IN",
     continent: "Asia",
@@ -1369,7 +1369,7 @@ export const CITIES: City[] = [
   },
   {
     id: "hue-vn",
-    name: "Hue",
+    name: "Huế",
     country: "Vietnam",
     countryCode: "VN",
     continent: "Asia",
@@ -1854,7 +1854,7 @@ export const CITIES: City[] = [
   },
   {
     id: "leon-mx",
-    name: "Leon",
+    name: "León",
     country: "Mexico",
     countryCode: "MX",
     continent: "North America",
@@ -1932,7 +1932,7 @@ export const CITIES: City[] = [
   },
   {
     id: "luan-cn",
-    name: "Luan",
+    name: "Lu'an",
     country: "China",
     countryCode: "CN",
     continent: "Asia",
@@ -2141,7 +2141,7 @@ export const CITIES: City[] = [
   },
   {
     id: "medellin-co",
-    name: "Medellin",
+    name: "Medellín",
     country: "Colombia",
     countryCode: "CO",
     continent: "South America",
@@ -2174,7 +2174,7 @@ export const CITIES: City[] = [
   },
   {
     id: "merida-mx",
-    name: "Merida",
+    name: "Mérida",
     country: "Mexico",
     countryCode: "MX",
     continent: "North America",
@@ -2686,7 +2686,7 @@ export const CITIES: City[] = [
   },
   {
     id: "rangoon-mm",
-    name: "Rangoon",
+    name: "Yangon",
     country: "Myanmar",
     countryCode: "MM",
     continent: "Asia",
@@ -2899,7 +2899,7 @@ export const CITIES: City[] = [
   },
   {
     id: "sao-paulo-br",
-    name: "Sao Paulo",
+    name: "São Paulo",
     country: "Brazil",
     countryCode: "BR",
     continent: "South America",
@@ -2999,7 +2999,7 @@ export const CITIES: City[] = [
   },
   {
     id: "shenyeng-cn",
-    name: "Shenyeng",
+    name: "Shenyang",
     country: "China",
     countryCode: "CN",
     continent: "Asia",
@@ -3021,7 +3021,7 @@ export const CITIES: City[] = [
   },
   {
     id: "shijianzhuang-cn",
-    name: "Shijianzhuang",
+    name: "Shijiazhuang",
     country: "China",
     countryCode: "CN",
     continent: "Asia",
@@ -3176,7 +3176,7 @@ export const CITIES: City[] = [
   },
   {
     id: "taian-cn",
-    name: "Taian",
+    name: "Tai'an",
     country: "China",
     countryCode: "CN",
     continent: "Asia",
@@ -3364,7 +3364,7 @@ export const CITIES: City[] = [
   },
   {
     id: "ujungpandang-id",
-    name: "Ujungpandang",
+    name: "Makassar",
     country: "Indonesia",
     countryCode: "ID",
     continent: "Asia",
@@ -3540,7 +3540,7 @@ export const CITIES: City[] = [
   },
   {
     id: "xian-cn",
-    name: "Xian",
+    name: "Xi'an",
     country: "China",
     countryCode: "CN",
     continent: "Asia",
@@ -3595,7 +3595,7 @@ export const CITIES: City[] = [
   },
   {
     id: "yaounde-cm",
-    name: "Yaounde",
+    name: "Yaoundé",
     country: "Cameroon",
     countryCode: "CM",
     continent: "Africa",
@@ -3689,7 +3689,7 @@ export const CITIES: City[] = [
   // city already-shipped days point to.
   {
     id: "cancun-mx",
-    name: "Cancun",
+    name: "Cancún",
     country: "Mexico",
     countryCode: "MX",
     continent: "North America",
@@ -3778,7 +3778,7 @@ export const CITIES: City[] = [
   },
   {
     id: "male-mv",
-    name: "Male",
+    name: "Malé",
     country: "Maldives",
     countryCode: "MV",
     continent: "Asia",
@@ -4113,7 +4113,7 @@ export const CITIES: City[] = [
   },
   {
     id: "asuncion-py",
-    name: "Asuncion",
+    name: "Asunción",
     country: "Paraguay",
     countryCode: "PY",
     continent: "South America",
@@ -4260,7 +4260,7 @@ export const CITIES: City[] = [
   },
   {
     id: "zurich-ch",
-    name: "Zurich",
+    name: "Zürich",
     country: "Switzerland",
     countryCode: "CH",
     continent: "Europe",
@@ -4293,7 +4293,7 @@ export const CITIES: City[] = [
   },
   {
     id: "reykjavik-is",
-    name: "Reykjavik",
+    name: "Reykjavík",
     country: "Iceland",
     countryCode: "IS",
     continent: "Europe",

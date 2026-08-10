@@ -22,11 +22,14 @@ const COUNTRY_ALIASES: Record<string, string> = {
 /** Lowercases and strips accents/diacritics so "bogota" matches "Bogotá" — the
  * city itself still displays with its accent, this is only used for comparison. */
 const DIACRITIC_MARKS = new RegExp('[\\u0300-\\u036f]', 'g');
+/** Straight and curly apostrophes, so "xian" matches "Xi'an" without requiring the punctuation. */
+const APOSTROPHES = /['’]/g;
 
 function normalize(value: string): string {
   return value
     .normalize('NFD')
     .replace(DIACRITIC_MARKS, '')
+    .replace(APOSTROPHES, '')
     .toLowerCase();
 }
 
