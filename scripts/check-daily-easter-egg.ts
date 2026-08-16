@@ -2,23 +2,18 @@
 // today's daily-mode target city (for any difficulty pool) is one of the
 // easter egg cities, using the same selection logic as the app.
 import { appendFileSync } from 'node:fs';
-import { CITIES } from '../src/data/cities';
-import { EASY_CITIES } from '../src/data/easyCities';
-import { MEDIUM_CITIES } from '../src/data/mediumCities';
-import { GUESS_CITIES } from '../src/data/guessCities';
+import { citiesForDifficulty, type Difficulty } from '../src/hooks/useDifficulty';
 import { EASTER_EGG_CITY_IDS } from '../src/data/easterEggs';
 import { getDailyCity } from '../src/utils/dailyCity';
 import { getEasternDateString } from '../src/utils/dateSeed';
-import type { City } from '../src/types/city';
 
-const HARD_CITIES: City[] = [...CITIES, ...GUESS_CITIES];
-const POOLS: Record<string, City[]> = { easy: EASY_CITIES, medium: MEDIUM_CITIES, hard: HARD_CITIES };
+const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
 
 const dateString = getEasternDateString();
 const matches: string[] = [];
 
-for (const [difficulty, pool] of Object.entries(POOLS)) {
-  const city = getDailyCity(pool);
+for (const difficulty of DIFFICULTIES) {
+  const city = getDailyCity(citiesForDifficulty(difficulty));
   if (EASTER_EGG_CITY_IDS.has(city.id)) {
     matches.push(`${difficulty}: ${city.name}, ${city.country}`);
   }
