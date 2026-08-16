@@ -74,7 +74,11 @@ export function WeatherRevealCard({ data, status, error, revealedCityLabel, reve
         </a>
       )}
 
-      {status === 'loading' && <p className={styles.placeholder}>Loading live weather…</p>}
+      {status === 'loading' && (
+        <div className={styles.placeholder}>
+          <span className={styles.spinner} role="status" aria-label="Loading live weather" />
+        </div>
+      )}
       {status === 'error' && <p className={styles.placeholder}>{error ?? 'Could not load weather data.'}</p>}
 
       {status === 'success' && data && (

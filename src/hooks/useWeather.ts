@@ -14,6 +14,31 @@ const BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const CURRENT_PARAMS = 'temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m,is_day';
 const DAILY_PARAMS = 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset';
 
+// Retries a couple times (3 attempts total) with a short delay before giving up —
+// Open-Meteo occasionally has transient blips, so one failure shouldn't be fatal.
+const MAX_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 1000;
+const API_DOWN_MESSAGE = 'The weather API appears to be down. Wait a few minutes and refresh the page.';
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWeather(city: City): Promise<OpenMeteoResponse> {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(buildUrl(city));
+      if (!res.ok) throw new Error(`Open-Meteo request failed (${res.status})`);
+      return (await res.json()) as OpenMeteoResponse;
+    } catch (err) {
+      if (attempt === MAX_ATTEMPTS) throw err;
+      await sleep(RETRY_DELAY_MS);
+    }
+  }
+  // Unreachable — the loop above always returns or throws on the final attempt.
+  throw new Error(API_DOWN_MESSAGE);
+}
+
 // In-memory cache keyed by `${cityId}:${dateString}` so re-renders / repeated mounts
 // for the same city on the same day don't refetch.
 const cache = new Map<string, OpenMeteoResponse>();
@@ -55,20 +80,15 @@ export function useWeather(city: City, dateString: string): UseWeatherResult {
 
     let cancelled = false;
 
-    fetch(buildUrl(city))
-      .then((res) => {
-        if (!res.ok) throw new Error(`Open-Meteo request failed (${res.status})`);
-        return res.json() as Promise<OpenMeteoResponse>;
-      })
+    fetchWeather(city)
       .then((data) => {
         if (cancelled) return;
         cache.set(cacheKey, data);
         setResult({ data, status: 'success', error: null });
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (cancelled) return;
-        const message = err instanceof Error ? err.message : 'Failed to load weather data';
-        setResult({ data: null, status: 'error', error: message });
+        setResult({ data: null, status: 'error', error: API_DOWN_MESSAGE });
       });
 
     return () => {
