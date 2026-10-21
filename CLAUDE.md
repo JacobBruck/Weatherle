@@ -154,24 +154,20 @@ permission error by granting the client direct table access.
 - `useDailyAverage` waits **800 ms** before calling `getDailyAverage`, so the RPC write lands before
   the read. Without the delay the post-game banner showed stale numbers.
 
-### ⚠️ Pending: Supabase Data API grant change (2026-10-30)
+### Supabase Data API grant change (2026-10-30) — handled
 
 From Oct 30, Supabase stops auto-granting Data API access to **newly created** tables in `public`.
-Existing tables keep their grants, so **the live project is unaffected** — but `schema.sql` is a
+Existing tables keep their grants, so **the live project was never at risk** — but `schema.sql` is a
 full-schema recreate script, so running it on a new project, a preview branch, or `supabase db reset`
-after that date produces tables the client can't reach ("permission denied").
+after that date would have produced tables the client can't reach ("permission denied").
 
-Fix is to add explicit grants to `schema.sql` alongside each table:
+Fixed: `schema.sql` now has an explicit `grant` right after each table's RLS policies —
+`profiles` (select, update), `game_results` (select, insert), `stats_summary` (select, insert,
+update), all to `authenticated`. `daily_anon_results` and `unlimited_anon_results` intentionally get
+**no** table grants — anon access to those stays RPC + view only, which already has explicit grants.
 
-```sql
-grant select, update          on public.profiles      to authenticated;
-grant select, insert          on public.game_results  to authenticated;
-grant select, insert, update  on public.stats_summary to authenticated;
--- daily_anon_results and unlimited_anon_results: intentionally NO grants.
--- Views and functions already have explicit grants in the file.
-```
-
-`anon` needs no table grants — anonymous access is entirely RPC + views.
+Running the updated file against the live project is safe (grants are idempotent) but not required —
+only matters for a future reset/new project.
 
 ---
 

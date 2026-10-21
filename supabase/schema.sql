@@ -21,6 +21,11 @@ create policy "Users can update their own profile"
   on profiles for update
   using (auth.uid() = id);
 
+-- Explicit Data API grant. Supabase auto-granted this for tables created
+-- before 2026-10-30; new projects/resets after that date need it spelled out.
+-- RLS policies above still restrict rows to the owning user.
+grant select, update on profiles to authenticated;
+
 -- Auto-create a profile row whenever a new auth user signs up.
 create or replace function handle_new_user()
 returns trigger
@@ -70,6 +75,9 @@ create policy "Users can insert their own results"
   on game_results for insert
   with check (auth.uid() = user_id);
 
+-- Explicit Data API grant — see the note on profiles above.
+grant select, insert on game_results to authenticated;
+
 -- 3. Per-user stats summary ----------------------------------------------
 -- Mirrors the local DifficultyStats shape — one row per (user, mode, difficulty).
 create table if not exists stats_summary (
@@ -110,6 +118,9 @@ drop policy if exists "Users can update their own stats" on stats_summary;
 create policy "Users can update their own stats"
   on stats_summary for update
   using (auth.uid() = user_id);
+
+-- Explicit Data API grant — see the note on profiles above.
+grant select, insert, update on stats_summary to authenticated;
 
 -- 4. Anonymous daily contributions -----------------------------------------
 -- Stores one row per anonymous (signed-out) daily play. `client_id` is a
